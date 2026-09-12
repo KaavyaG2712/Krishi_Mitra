@@ -11,6 +11,7 @@ __pycache__/
 htmlcov/
 .venv/
 venv/
+*.egg-info/
 
 # JavaScript
 node_modules/
