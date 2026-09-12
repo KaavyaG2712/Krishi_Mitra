@@ -45,6 +45,31 @@ Open `http://127.0.0.1:8000/docs` and run the `GET /api/v1/health` endpoint. Run
 
 Do not put a real Gemini key in Git. Later, place it only in `backend/.env`.
 
+## Prepare and train the crop-health model
+
+After the PlantVillage subset has been prepared, create a deterministic split manifest from the repository root:
+
+```powershell
+py -3.12 data\create_splits.py `
+  --dataset-root data\processed\plantvillage_10class `
+  --output data\splits\plantvillage_10class.csv
+```
+
+Install the backend's ML dependencies and run the baseline training:
+
+```powershell
+cd C:\Users\Ajay\OneDrive\Documents\ChatGPT\proj1\backend
+.\.venv\Scripts\Activate.ps1
+pip install -e ".[dev,ml]"
+python scripts\train_crop_health.py `
+  --dataset-root ..\data\processed\plantvillage_10class `
+  --manifest ..\data\splits\plantvillage_10class.csv `
+  --output-dir ..\models\checkpoints\mobilenetv2-10class-v1 `
+  --cpu
+```
+
+The first training run downloads ImageNet-pretrained MobileNetV2 weights. It selects the checkpoint using validation macro-F1, then records independent test metrics and CPU latency locally.
+
 ## Project status
 
 Phase 1 has established the repository safeguards and backend starting point. The next implementation increment is the database schema and Alembic migration for model, scan, document, chunk, conversation, message, and citation provenance.
