@@ -1,0 +1,12 @@
+{
+  "module": "crop_health",
+  "version": "mobilenetv2-10class-v1",
+  "dataset": "PlantVillage 10-class subset",
+  "split_seed": 20260912,
+  "selection_metric": "validation macro-F1",
+  "best_validation_macro_f1": 0.9916443738940444,
+  "test_accuracy": 0.9868007542426147,
+  "test_macro_f1": 0.986263646597288,
+  "test_cpu_latency_ms": {"p50": 40.8491031248559, "p95": 43.51938750005502},
+  "limitation": "PlantVillage evaluation uses controlled-condition images and does not establish accuracy on field photographs."
+}

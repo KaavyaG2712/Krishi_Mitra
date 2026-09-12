@@ -1,4 +1,5 @@
 from functools import lru_cache
+from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -13,6 +14,8 @@ class Settings(BaseSettings):
     gemini_api_key: str | None = None
     gemini_generation_model: str = "gemini-2.5-flash"
     gemini_embedding_model: str = "gemini-embedding-2"
+    model_artifact_dir: Path = Path(__file__).resolve().parents[3] / "models" / "checkpoints" / "mobilenetv2-10class-v1"
+    health_confidence_threshold: float = 0.75
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
