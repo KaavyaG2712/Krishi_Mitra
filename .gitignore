@@ -1,0 +1,36 @@
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+
+# JavaScript
+node_modules/
+dist/
+.vite/
+
+# Local data, model artefacts, and logs
+data/raw/
+data/external_test/
+data/processed/
+models/checkpoints/
+models/releases/
+logs/
+*.log
+
+# Database storage
+postgres_data/
+
+# Editors and operating systems
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
