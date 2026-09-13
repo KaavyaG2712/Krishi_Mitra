@@ -217,7 +217,7 @@ try {
             -WorkingDirectory $frontendDirectory -PowerShellExecutable $windowsPowerShell.Source
     }
 
-    Write-Host "" 
+    Write-Host ""
     Write-Host "KrishiMitra is ready:" -ForegroundColor Green
     Write-Host "  Website:  http://localhost:5173"
     Write-Host "  API docs: http://127.0.0.1:8000/docs"
@@ -228,7 +228,7 @@ try {
     }
 }
 catch {
-    Write-Host "" 
+    Write-Host ""
     Write-Host "KrishiMitra launch failed: $($_.Exception.Message)" -ForegroundColor Red
     exit 1
 }
