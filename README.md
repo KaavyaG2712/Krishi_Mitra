@@ -16,6 +16,26 @@ During development, run PostgreSQL + pgvector in Docker and run FastAPI and the 
 - Node.js LTS (already detected locally)
 - Docker Desktop with the WSL 2 backend enabled
 
+## One-click local start (Windows)
+
+After the initial Python and Node.js setup, double-click [Start-KrishiMitra.cmd](Start-KrishiMitra.cmd) in File Explorer. It will start the PostgreSQL + pgvector database, wait for it to become ready, apply Alembic migrations, and open separate PowerShell windows for the FastAPI backend and React frontend.
+
+You can also run it from the repository root in PowerShell:
+
+```powershell
+.\Start-KrishiMitra.cmd
+```
+
+On a newly cloned repository, use the setup variant once. It creates `backend/.venv`, installs the backend packages, and runs `npm ci` from the checked-in lockfile if those dependencies are missing:
+
+```powershell
+.\scripts\Start-KrishiMitra.ps1 -InstallMissing
+```
+
+Add `-OpenBrowser` to open the website automatically after launch. The normal launcher deliberately reuses an existing virtual environment and `node_modules` rather than reinstalling packages every time. It never overwrites an existing `backend/.env`; if that file is absent, it creates it from `backend/.env.example`.
+
+The launcher leaves an already-listening server on port `8000` or `5173` alone, so it is safe to run again. Open `http://localhost:5173` for the web app and `http://127.0.0.1:8000/docs` for the API documentation. Close the Backend or Frontend PowerShell window to stop that server; run `docker compose down` from the repository root to stop the database without deleting its data.
+
 ## Start the database
 
 From the repository root in PowerShell:
@@ -76,5 +96,13 @@ The first training run downloads ImageNet-pretrained MobileNetV2 weights. It sel
 ## Project status
 
 Module 1 now supports the full local flow: browser → FastAPI → MobileNetV2 model → PostgreSQL → browser. Its controlled PlantVillage test macro-F1 is 0.9863; that result must not be treated as a claim about real field photographs.
+
+### Crop Health limitations and safe use
+
+`Crop Hint` means **Expected crop**. It is a cross-check: the model predicts the crop from the image, then compares it with the crop selected by the user. A mismatch is marked uncertain and must not be used as a diagnosis. It is deliberately not used to force the output into the selected crop, because doing so could turn a potato image into a misleading tomato result.
+
+Version `mobilenetv2-10class-v1` can only distinguish these conditions: Tomato (Healthy, Early Blight, Late Blight), Potato (Healthy, Early Blight, Late Blight), Maize (Healthy, Common Rust), and Grape (Healthy, Black Rot). It has **no Northern Leaf Blight class**, so a northern-leaf-blight photo may be forced into the closest known maize class with a high softmax score. That score is relative to the limited known labels, not proof that the disease is Common Rust. The app rejects grayscale images because its model was trained with colour images only.
+
+To recognise Northern Leaf Blight reliably, add a labeled Northern Leaf Blight class (and representative field photos/negative examples), retrain, calibrate on held-out field data, and evaluate an explicit unknown/out-of-distribution rejection rule before publishing a new model version.
 
 The initial Review 3 database migration also creates the provenance tables needed for Module 3. The next increment is ingesting reviewed official documents and implementing retrieval with citations.

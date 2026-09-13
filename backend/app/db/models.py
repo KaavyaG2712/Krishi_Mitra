@@ -29,6 +29,8 @@ class DiseaseScan(Base):
 
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     image_reference: Mapped[str] = mapped_column(String(80), index=True)
+    crop_hint: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    crop_mismatch: Mapped[bool] = mapped_column(Boolean, default=False)
     predicted_label: Mapped[str] = mapped_column(String(128))
     confidence: Mapped[float] = mapped_column(Float)
     model_version: Mapped[str] = mapped_column(String(128))

@@ -14,11 +14,31 @@ from torchvision.transforms import v2
 LABELS = ["tomato_healthy", "tomato_early_blight", "tomato_late_blight", "potato_healthy", "potato_early_blight", "potato_late_blight", "maize_healthy", "maize_common_rust", "grape_healthy", "grape_black_rot"]
 DISPLAY_LABELS = {label: label.replace("_", " ").title().replace("Maize", "Maize").replace("Grape", "Grape") for label in LABELS}
 MAX_IMAGE_BYTES = 10 * 1024 * 1024
+MIN_AVERAGE_CHROMA = 4.0
 _inference_lock = Lock()
 
 
 class InvalidLeafImage(ValueError):
     pass
+
+
+def is_grayscale(image: Image.Image) -> bool:
+    """Reject monochrome inputs instead of silently treating them as colour photos.
+
+    The version-1 model was trained only on the colour PlantVillage subset.  A
+    grayscale photo is outside that training distribution; converting it to RGB
+    creates three identical channels but does not restore the missing colour
+    information the model learned from.
+    """
+    if image.mode in {"1", "L", "I", "I;16", "F"}:
+        return True
+    sample = image.convert("RGB")
+    sample.thumbnail((64, 64))
+    pixels = list(sample.getdata())
+    if not pixels:
+        return True
+    average_chroma = sum(max(pixel) - min(pixel) for pixel in pixels) / len(pixels)
+    return average_chroma < MIN_AVERAGE_CHROMA
 
 
 def validate_image(contents: bytes) -> Image.Image:
@@ -27,7 +47,12 @@ def validate_image(contents: bytes) -> Image.Image:
     try:
         image = Image.open(BytesIO(contents))
         image.verify()
-        return Image.open(BytesIO(contents)).convert("RGB")
+        decoded = Image.open(BytesIO(contents))
+        if is_grayscale(decoded):
+            raise InvalidLeafImage(
+                "Upload a colour leaf photo. Grayscale images are outside this model's supported input range."
+            )
+        return decoded.convert("RGB")
     except (UnidentifiedImageError, OSError) as error:
         raise InvalidLeafImage("The uploaded file is not a valid readable image.") from error
 

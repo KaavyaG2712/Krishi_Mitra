@@ -7,6 +7,49 @@ type View = "overview" | "health" | "advisor";
 
 const supportedCrops = ["Tomato", "Potato", "Maize", "Grape"];
 
+type HealthPrediction = {
+  predicted_label: string;
+  confidence: number;
+  is_uncertain: boolean;
+  model_version: string;
+  advisory_reference: string;
+  crop_mismatch?: boolean;
+  selected_crop?: string | null;
+  detected_crop?: string | null;
+  supported_conditions?: string[];
+};
+
+type ApiErrorPayload = {
+  detail?: unknown;
+  message?: unknown;
+  code?: unknown;
+  selected_crop?: unknown;
+  expected_crop?: unknown;
+  detected_crop?: unknown;
+};
+
+function formatCrop(value: string) {
+  return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+}
+
+function predictionErrorMessage(payload: unknown) {
+  if (typeof payload === "string") return payload;
+  if (!payload || typeof payload !== "object") return "Prediction could not be completed.";
+
+  const response = payload as ApiErrorPayload;
+  const detail = response.detail && typeof response.detail === "object" ? response.detail as ApiErrorPayload : null;
+  const code = detail?.code ?? response.code;
+  const selectedCrop = detail?.selected_crop ?? detail?.expected_crop ?? response.selected_crop ?? response.expected_crop;
+  const detectedCrop = detail?.detected_crop ?? response.detected_crop;
+
+  if (code === "crop_mismatch" || (typeof selectedCrop === "string" && typeof detectedCrop === "string")) {
+    return `Crop mismatch: you selected ${formatCrop(String(selectedCrop))}, but the model detected ${formatCrop(String(detectedCrop))}. This result is not a diagnosis. Select the actual crop and try a clear leaf image.`;
+  }
+
+  const message = detail?.message ?? response.message ?? response.detail;
+  return typeof message === "string" ? message : "Prediction could not be completed.";
+}
+
 async function checkApi(): Promise<boolean> {
   const response = await fetch(`${apiBaseUrl}/health`);
   return response.ok;
@@ -91,7 +134,7 @@ function Overview({ onNavigate }: { onNavigate: (view: View) => void }) {
       </section>
 
       <section className="grid gap-5 md:grid-cols-2">
-        <ModuleCard number="01" title="Crop Health Intelligence" detail="MobileNetV2 classifies the selected Tomato, Potato, Maize, and Grape leaf conditions. Low-confidence results direct the farmer to a KVK or agricultural officer." action="Open image upload" onClick={() => onNavigate("health")} />
+        <ModuleCard number="01" title="Crop Health Intelligence" detail="MobileNetV2 classifies supported Tomato, Potato, Maize, and Grape leaf conditions, then validates the detected crop against the crop you selected. Low-confidence or mismatch results direct the farmer to a KVK or agricultural officer." action="Open image upload" onClick={() => onNavigate("health")} />
         <ModuleCard number="02" title="Citation-Grounded Advisor" detail="PostgreSQL + pgvector retrieves relevant excerpts from approved official documents before Gemini prepares an answer with source pages." action="Open advisor" onClick={() => onNavigate("advisor")} />
       </section>
     </>
@@ -106,25 +149,78 @@ function CropHealth() {
   const [file, setFile] = useState<File | null>(null);
   const [crop, setCrop] = useState("Tomato");
   const [message, setMessage] = useState<string | null>(null);
-  const [result, setResult] = useState<{ predicted_label: string; confidence: number; is_uncertain: boolean; model_version: string; advisory_reference: string } | null>(null);
+  const [result, setResult] = useState<HealthPrediction | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const previewUrl = useMemo(() => (file ? URL.createObjectURL(file) : null), [file]);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     if (!file) return setMessage("Choose one clear leaf image first.");
-    setIsSubmitting(true); setMessage(null); setResult(null);
-    const form = new FormData(); form.append("image", file); form.append("crop_hint", crop);
+    setIsSubmitting(true);
+    setMessage(null);
+    setResult(null);
+    const form = new FormData();
+    form.append("image", file);
+    form.append("crop_hint", crop);
     try {
       const response = await fetch(`${apiBaseUrl}/health/predict`, { method: "POST", body: form });
-      const payload = await response.json();
-      if (!response.ok) throw new Error(payload.detail ?? "Prediction could not be completed.");
-      setResult(payload);
-    } catch (error) { setMessage(error instanceof Error ? error.message : "Prediction could not be completed."); }
-    finally { setIsSubmitting(false); }
+      const payload: unknown = await response.json().catch(() => null);
+      if (!response.ok) throw new Error(predictionErrorMessage(payload));
+      setResult(payload as HealthPrediction);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Prediction could not be completed.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  return <section className="py-10"><SectionTitle eyebrow="Module 1" title="Crop Health Intelligence" detail="For Review 3, the model supports Tomato, Potato, Maize, and Grape only." /><div className="mt-7 grid gap-6 lg:grid-cols-[1fr_0.8fr]"><form className="rounded-3xl border border-leaf-100 bg-white p-6 shadow-card" onSubmit={submit}><label className="block text-sm font-bold text-leaf-900">Crop hint</label><select className="mt-2 w-full rounded-xl border border-leaf-200 bg-white px-3 py-3 text-slate-700 focus:border-leaf-500 focus:outline-none" value={crop} onChange={(event) => setCrop(event.target.value)}>{supportedCrops.map((item) => <option key={item}>{item}</option>)}</select><label className="mt-6 grid min-h-52 cursor-pointer place-items-center rounded-2xl border-2 border-dashed border-leaf-200 bg-leaf-50 p-6 text-center transition hover:border-leaf-500"><input className="sr-only" type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => { setFile(event.target.files?.[0] ?? null); setMessage(null); setResult(null); }} /><span><span className="block text-3xl">⌁</span><span className="mt-2 block font-semibold text-leaf-900">Choose a leaf image</span><span className="mt-1 block text-sm text-slate-500">PNG, JPG, or WebP · clear single leaf preferred</span></span></label>{file && <p className="mt-3 text-sm text-leaf-700">Selected: {file.name}</p>}<button disabled={isSubmitting} className="mt-6 w-full rounded-xl bg-leaf-700 px-5 py-3 font-semibold text-white hover:bg-leaf-900 disabled:cursor-wait disabled:opacity-70" type="submit">{isSubmitting ? "Analysing…" : "Analyse leaf"}</button>{message && <p className="mt-4 rounded-xl bg-amber-50 p-4 text-sm leading-6 text-amber-900">{message}</p>}</form><aside className="rounded-3xl bg-soil-50 p-6"><p className="font-bold text-soil-700">Result preview</p>{previewUrl ? <img className="mt-5 aspect-square w-full rounded-2xl object-cover" src={previewUrl} alt="Selected leaf preview" /> : <div className="mt-5 grid aspect-square place-items-center rounded-2xl border border-dashed border-soil-200 bg-white p-8 text-center text-sm text-slate-500">Your selected leaf will appear here.</div>}{result ? <div className="mt-5 rounded-2xl bg-white p-4 text-sm text-slate-700"><p className="text-lg font-bold text-leaf-900">{result.predicted_label}</p><p className="mt-1">Confidence: <strong>{(result.confidence * 100).toFixed(1)}%</strong></p><p className="mt-1">Model: {result.model_version}</p><p className={`mt-3 rounded-lg p-3 ${result.is_uncertain ? "bg-amber-50 text-amber-900" : "bg-leaf-50 text-leaf-900"}`}>{result.advisory_reference}</p></div> : <p className="mt-5 text-sm leading-6 text-slate-600">Start the FastAPI backend, then upload a supported leaf image to receive its real prediction.</p>}</aside></div></section>;
+  return (
+    <section className="py-10">
+      <SectionTitle
+        eyebrow="Module 1"
+        title="Crop Health Intelligence"
+        detail="For Review 3, the model supports Tomato, Potato, Maize, and Grape only. Select the crop shown in the image so the result can be validated."
+      />
+      <div className="mt-7 grid gap-6 lg:grid-cols-[1fr_0.8fr]">
+        <form className="rounded-3xl border border-leaf-100 bg-white p-6 shadow-card" onSubmit={submit}>
+          <label className="block text-sm font-bold text-leaf-900" htmlFor="crop-hint">Expected crop (Crop Hint)</label>
+          <select id="crop-hint" aria-describedby="crop-hint-help" className="mt-2 w-full rounded-xl border border-leaf-200 bg-white px-3 py-3 text-slate-700 focus:border-leaf-500 focus:outline-none" value={crop} onChange={(event) => setCrop(event.target.value)}>
+            {supportedCrops.map((item) => <option key={item}>{item}</option>)}
+          </select>
+          <p id="crop-hint-help" className="mt-3 rounded-xl bg-leaf-50 p-3 text-sm leading-6 text-leaf-900">
+            <strong>What this does:</strong> select the crop the uploaded leaf belongs to. This does not force a diagnosis; it validates the crop predicted by the model. If they differ, KrishiMitra marks the result as a mismatch and it must not be used as a diagnosis.
+          </p>
+          <label className="mt-6 grid min-h-52 cursor-pointer place-items-center rounded-2xl border-2 border-dashed border-leaf-200 bg-leaf-50 p-6 text-center transition hover:border-leaf-500">
+            <input className="sr-only" type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => { setFile(event.target.files?.[0] ?? null); setMessage(null); setResult(null); }} />
+            <span><span className="block text-3xl">⌁</span><span className="mt-2 block font-semibold text-leaf-900">Choose a leaf image</span><span className="mt-1 block text-sm text-slate-500">PNG, JPG, or WebP · clear single leaf preferred</span></span>
+          </label>
+          {file && <p className="mt-3 text-sm text-leaf-700">Selected: {file.name}</p>}
+          <button disabled={isSubmitting} className="mt-6 w-full rounded-xl bg-leaf-700 px-5 py-3 font-semibold text-white hover:bg-leaf-900 disabled:cursor-wait disabled:opacity-70" type="submit">{isSubmitting ? "Analysing…" : "Analyse leaf"}</button>
+          {message && <p role="alert" className="mt-4 rounded-xl bg-amber-50 p-4 text-sm leading-6 text-amber-900">{message}</p>}
+        </form>
+        <aside className="rounded-3xl bg-soil-50 p-6">
+          <p className="font-bold text-soil-700">Result preview</p>
+          {previewUrl ? <img className="mt-5 aspect-square w-full rounded-2xl object-cover" src={previewUrl} alt="Selected leaf preview" /> : <div className="mt-5 grid aspect-square place-items-center rounded-2xl border border-dashed border-soil-200 bg-white p-8 text-center text-sm text-slate-500">Your selected leaf will appear here.</div>}
+          {result ? (
+            <div className="mt-5 rounded-2xl bg-white p-4 text-sm text-slate-700">
+              {result.crop_mismatch ? (
+                <div role="alert" className="rounded-xl bg-amber-50 p-3 text-amber-950">
+                  <p className="font-bold">Crop mismatch — do not use this as a diagnosis</p>
+                  <p className="mt-1 leading-6">You selected <strong>{result.selected_crop ? formatCrop(result.selected_crop) : crop}</strong>, but the model detected <strong>{result.detected_crop ? formatCrop(result.detected_crop) : "a different supported crop"}</strong>. Choose the actual crop and analyse a clear leaf image again.</p>
+                </div>
+              ) : result.selected_crop && result.detected_crop ? <p className="rounded-xl bg-leaf-50 p-3 font-medium text-leaf-900">Crop validation passed: selected {formatCrop(result.selected_crop)} and detected {formatCrop(result.detected_crop)}.</p> : null}
+              <p className={`mt-3 text-lg font-bold ${result.crop_mismatch ? "text-amber-950" : "text-leaf-900"}`}>{result.crop_mismatch ? "Unvalidated classifier output" : result.predicted_label}</p>
+              {result.crop_mismatch && <p className="mt-1 leading-6 text-amber-900">Initial classifier label: {result.predicted_label}. It is displayed for transparency only, not as a disease diagnosis.</p>}
+              <p className="mt-1">Model score (within supported labels): <strong>{(result.confidence * 100).toFixed(1)}%</strong></p>
+              <p className="mt-1">Model: {result.model_version}</p>
+              {result.detected_crop && result.supported_conditions && <p className="mt-3 rounded-lg bg-soil-50 p-3 leading-6 text-soil-700"><strong>Model scope:</strong> for {formatCrop(result.detected_crop)}, this version only compares {result.supported_conditions.join(", ")}. A high score does not confirm diseases outside that list.</p>}
+              <p className={`mt-3 rounded-lg p-3 ${result.is_uncertain || result.crop_mismatch ? "bg-amber-50 text-amber-900" : "bg-leaf-50 text-leaf-900"}`}>{result.advisory_reference}</p>
+            </div>
+          ) : <p className="mt-5 text-sm leading-6 text-slate-600">Start the FastAPI backend, then upload a supported leaf image to receive its real prediction.</p>}
+        </aside>
+      </div>
+    </section>
+  );
 }
 
 function Advisor() {
