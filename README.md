@@ -27,6 +27,8 @@ docker compose ps
 
 The local database is available at `localhost:5432`. Its development-only credentials are in `compose.yaml`; they are not for deployment.
 
+If `docker pull` reports a missing `docker-credential-desktop` helper, remove only the broken `"credsStore": "desktop"` line from `C:\Users\<your-user>\.docker\config.json` after making a backup. This is only appropriate when Docker Desktop has no credential-helper executable and the config has no saved registry credentials.
+
 ## Start the backend
 
 In a second PowerShell window:
@@ -36,12 +38,13 @@ cd C:\Users\Ajay\OneDrive\Documents\ChatGPT\proj1\backend
 py -3.12 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
-pip install -e ".[dev]"
+pip install -e ".[dev,ml]"
 Copy-Item .env.example .env
+python -m alembic upgrade head
 uvicorn app.main:app --reload --port 8000
 ```
 
-Open `http://127.0.0.1:8000/docs` and run the `GET /api/v1/health` endpoint. Run backend tests with `pytest`.
+Open `http://127.0.0.1:8000/docs` and run the `GET /api/v1/health` endpoint. After training has produced the local model artefact, use `POST /api/v1/health/predict` to upload a leaf image. Every accepted prediction stores a scan ID, model version, confidence, label, and SHA-256 image reference in PostgreSQL; the uploaded image itself is not stored.
 
 Do not put a real Gemini key in Git. Later, place it only in `backend/.env`.
 
@@ -72,4 +75,6 @@ The first training run downloads ImageNet-pretrained MobileNetV2 weights. It sel
 
 ## Project status
 
-Phase 1 has established the repository safeguards and backend starting point. The next implementation increment is the database schema and Alembic migration for model, scan, document, chunk, conversation, message, and citation provenance.
+Module 1 now supports the full local flow: browser → FastAPI → MobileNetV2 model → PostgreSQL → browser. Its controlled PlantVillage test macro-F1 is 0.9863; that result must not be treated as a claim about real field photographs.
+
+The initial Review 3 database migration also creates the provenance tables needed for Module 3. The next increment is ingesting reviewed official documents and implementing retrieval with citations.

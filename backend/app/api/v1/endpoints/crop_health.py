@@ -1,9 +1,13 @@
-from uuid import UUID, uuid4
+from hashlib import sha256
+from uuid import UUID
 
-from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
 from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
+from app.db.database import get_db
+from app.db.models import DiseaseScan
 from app.modules.crop_health.service import DISPLAY_LABELS, InvalidLeafImage, predict
 
 router = APIRouter(prefix="/health")
@@ -20,18 +24,31 @@ class HealthPredictionResponse(BaseModel):
 
 
 @router.post("/predict", response_model=HealthPredictionResponse, status_code=status.HTTP_201_CREATED)
-async def predict_leaf(image: UploadFile = File(...), crop_hint: str | None = Form(default=None)) -> HealthPredictionResponse:
+async def predict_leaf(
+    image: UploadFile = File(...),
+    crop_hint: str | None = Form(default=None),
+    db: Session = Depends(get_db),
+) -> HealthPredictionResponse:
     if image.content_type not in {"image/jpeg", "image/png", "image/webp"}:
         raise HTTPException(status_code=415, detail="Upload a PNG, JPEG, or WebP leaf image.")
     if crop_hint and crop_hint.lower() not in SUPPORTED_CROPS:
         raise HTTPException(status_code=422, detail="Crop hint must be Tomato, Potato, Maize, or Grape.")
     settings = get_settings()
     try:
-        label, confidence = predict(await image.read(), settings.model_artifact_dir)
+        image_contents = await image.read()
+        label, confidence = predict(image_contents, settings.model_artifact_dir)
     except InvalidLeafImage as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
     except FileNotFoundError as error:
         raise HTTPException(status_code=503, detail="The crop-health model is unavailable.") from error
     uncertain = confidence < settings.health_confidence_threshold
     reference = "Result uncertain. Please consult a local agricultural officer/KVK." if uncertain else "Use the cited Agronomy Advisor for evidence-grounded next steps; confirm treatment decisions with a local agricultural officer/KVK."
-    return HealthPredictionResponse(scan_id=uuid4(), predicted_label=DISPLAY_LABELS[label], confidence=confidence, is_uncertain=uncertain, advisory_reference=reference)
+    scan = DiseaseScan(
+        image_reference=f"sha256:{sha256(image_contents).hexdigest()}",
+        predicted_label=label,
+        confidence=confidence,
+        model_version="mobilenetv2-10class-v1",
+    )
+    db.add(scan)
+    db.flush()
+    return HealthPredictionResponse(scan_id=scan.id, predicted_label=DISPLAY_LABELS[label], confidence=confidence, is_uncertain=uncertain, advisory_reference=reference)
