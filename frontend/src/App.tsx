@@ -19,6 +19,21 @@ type HealthPrediction = {
   supported_conditions?: string[];
 };
 
+type AdvisorChatResponse = {
+  conversation_id: string;
+  message_id: string;
+  answer: string;
+  generation_model: string;
+  disclaimer: string;
+};
+
+type ChatMessage = {
+  id: string;
+  role: "user" | "assistant";
+  text: string;
+  disclaimer?: string;
+};
+
 type ApiErrorPayload = {
   detail?: unknown;
   message?: unknown;
@@ -81,7 +96,7 @@ function App() {
             <span className="grid h-11 w-11 place-items-center rounded-2xl bg-leaf-700 text-xl text-white shadow-card">✦</span>
             <span>
               <span className="block text-xl font-bold tracking-tight text-leaf-900">KrishiMitra</span>
-              <span className="block text-xs font-medium text-leaf-700">Evidence-aware crop support</span>
+              <span className="block text-xs font-medium text-leaf-700">AI-powered crop support</span>
             </span>
           </button>
           <div className="flex flex-wrap items-center gap-2">
@@ -116,8 +131,8 @@ function Overview({ onNavigate }: { onNavigate: (view: View) => void }) {
       <section className="grid gap-7 py-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
         <div>
           <p className="mb-3 inline-block rounded-full bg-soil-50 px-3 py-1 text-sm font-semibold text-soil-700">Local review demonstration</p>
-          <h1 className="max-w-2xl text-4xl font-bold tracking-tight text-leaf-900 sm:text-5xl">Two practical AI tools, built with evidence and care.</h1>
-          <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">Upload a leaf for a confidence-aware health result, then ask crop questions that are answered only from cited agricultural sources.</p>
+          <h1 className="max-w-2xl text-4xl font-bold tracking-tight text-leaf-900 sm:text-5xl">Two practical AI tools for crop support.</h1>
+          <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">Upload a leaf for a confidence-aware health result, then ask Gemini-powered questions about crops and general farming practices.</p>
           <div className="mt-7 flex flex-wrap gap-3">
             <button className="rounded-xl bg-leaf-700 px-5 py-3 font-semibold text-white shadow-card transition hover:bg-leaf-900" onClick={() => onNavigate("health")}>Try crop health</button>
             <button className="rounded-xl border border-leaf-200 bg-white px-5 py-3 font-semibold text-leaf-700 transition hover:bg-leaf-50" onClick={() => onNavigate("advisor")}>Ask the advisor</button>
@@ -128,14 +143,14 @@ function Overview({ onNavigate }: { onNavigate: (view: View) => void }) {
           <dl className="mt-6 space-y-5">
             <div><dt className="text-2xl font-bold">10</dt><dd className="text-sm text-leaf-100">approved disease labels</dd></div>
             <div><dt className="text-2xl font-bold">2</dt><dd className="text-sm text-leaf-100">complete AI modules</dd></div>
-            <div><dt className="text-2xl font-bold">0</dt><dd className="text-sm text-leaf-100">cloud services required for the demo</dd></div>
+            <div><dt className="text-2xl font-bold">1</dt><dd className="text-sm text-leaf-100">protected Gemini API connection for the chatbot</dd></div>
           </dl>
         </aside>
       </section>
 
       <section className="grid gap-5 md:grid-cols-2">
-        <ModuleCard number="01" title="Crop Health Intelligence" detail="The input guard rejects obvious non-leaf images before MobileNetV2 compares supported Tomato, Potato, Maize, and Grape leaf conditions. Low-confidence outputs return no disease label; accepted results are validated against the crop you selected." action="Open image upload" onClick={() => onNavigate("health")} />
-        <ModuleCard number="02" title="Citation-Grounded Advisor" detail="PostgreSQL + pgvector retrieves relevant excerpts from approved official documents before Gemini prepares an answer with source pages." action="Open advisor" onClick={() => onNavigate("advisor")} />
+        <ModuleCard number="01" title="Crop Health Intelligence" detail="The input guard rejects obvious non-leaf images before MobileNetV2 compares supported Tomato, Potato, Maize, and Grape leaf conditions. Low-confidence outputs are marked review-only, and accepted results are validated against the crop you selected." action="Open image upload" onClick={() => onNavigate("health")} />
+        <ModuleCard number="03" title="AI Agronomy Chatbot" detail="Ask follow-up questions about crops, soil, irrigation, and general farm practices. FastAPI keeps the Gemini API key private and stores the conversation history in PostgreSQL." action="Open chatbot" onClick={() => onNavigate("advisor")} />
       </section>
     </>
   );
@@ -230,9 +245,84 @@ function CropHealth() {
 
 function Advisor() {
   const [question, setQuestion] = useState("");
-  const [response, setResponse] = useState<string | null>(null);
-  const submit = (event: FormEvent) => { event.preventDefault(); setResponse(question.trim() ? "The advisor interface is ready. It will be enabled after official documents are catalogued, embedded, and evaluated; until then, KrishiMitra will not generate an uncited answer." : "Enter a crop-related question to continue."); };
-  return <section className="py-10"><SectionTitle eyebrow="Module 3" title="Citation-Grounded Agronomy Advisor" detail="The advisor will answer only when relevant approved evidence can be retrieved." /><div className="mt-7 rounded-3xl border border-leaf-100 bg-white p-6 shadow-card"><div className="rounded-2xl bg-leaf-50 p-5 text-sm leading-7 text-leaf-900"><p className="font-bold">Safety-first advisory</p><p className="mt-1">Answers will cite their source title and page. No-evidence, off-topic, and safety-critical questions receive a clear referral instead of a made-up response.</p></div>{response && <div className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm leading-7 text-amber-950">{response}</div>}<form className="mt-6 flex flex-col gap-3 sm:flex-row" onSubmit={submit}><input className="min-w-0 flex-1 rounded-xl border border-leaf-200 px-4 py-3 text-slate-800 placeholder:text-slate-400 focus:border-leaf-500 focus:outline-none" value={question} onChange={(event) => setQuestion(event.target.value)} placeholder="Example: How can I reduce tomato blight risk?" /><button className="rounded-xl bg-leaf-700 px-5 py-3 font-semibold text-white hover:bg-leaf-900" type="submit">Ask advisor</button></form></div></section>;
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const submit = async (event: FormEvent) => {
+    event.preventDefault();
+    const cleanQuestion = question.trim();
+    if (!cleanQuestion || isSubmitting) return;
+
+    const userMessage: ChatMessage = { id: crypto.randomUUID(), role: "user", text: cleanQuestion };
+    setMessages((current) => [...current, userMessage]);
+    setQuestion("");
+    setError(null);
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(`${apiBaseUrl}/advisor/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: cleanQuestion, conversation_id: conversationId }),
+      });
+      const payload: unknown = await response.json().catch(() => null);
+      if (!response.ok) throw new Error(predictionErrorMessage(payload));
+
+      const result = payload as AdvisorChatResponse;
+      setConversationId(result.conversation_id);
+      setMessages((current) => [...current, {
+        id: result.message_id,
+        role: "assistant",
+        text: result.answer,
+        disclaimer: result.disclaimer,
+      }]);
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : "The advisor could not respond.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <section className="py-10">
+      <SectionTitle eyebrow="Module 3" title="AI Agronomy Chatbot" detail="Ask about crops, soil, irrigation, plant health, and general farming practices. Follow-up questions stay in the same conversation." />
+      <div className="mt-7 rounded-3xl border border-leaf-100 bg-white p-6 shadow-card">
+        <div className="rounded-2xl bg-leaf-50 p-5 text-sm leading-7 text-leaf-900">
+          <p className="font-bold">General AI guidance</p>
+          <p className="mt-1">Responses are generated by Gemini and may be wrong. Verify pesticide use, severe symptoms, and important farm decisions with the product label and a local KVK or agricultural officer.</p>
+        </div>
+
+        <div className="mt-6 min-h-72 space-y-4 rounded-2xl bg-slate-50 p-4" aria-live="polite">
+          {messages.length === 0 && <p className="py-20 text-center text-sm text-slate-500">Start by asking an agriculture-related question.</p>}
+          {messages.map((message) => (
+            <div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
+              <div className={`max-w-3xl rounded-2xl px-4 py-3 text-sm leading-7 ${message.role === "user" ? "bg-leaf-700 text-white" : "border border-leaf-100 bg-white text-slate-700"}`}>
+                <p className="whitespace-pre-wrap">{message.text}</p>
+                {message.disclaimer && <p className="mt-3 border-t border-leaf-100 pt-2 text-xs text-slate-500">{message.disclaimer}</p>}
+              </div>
+            </div>
+          ))}
+          {isSubmitting && <p className="text-sm font-medium text-leaf-700">KrishiMitra is thinking…</p>}
+        </div>
+
+        {error && <p role="alert" className="mt-4 rounded-xl bg-amber-50 p-4 text-sm leading-6 text-amber-900">{error}</p>}
+        <form className="mt-5 flex flex-col gap-3 sm:flex-row" onSubmit={submit}>
+          <textarea
+            className="min-h-24 min-w-0 flex-1 resize-y rounded-xl border border-leaf-200 px-4 py-3 text-slate-800 placeholder:text-slate-400 focus:border-leaf-500 focus:outline-none"
+            value={question}
+            maxLength={2000}
+            onChange={(event) => setQuestion(event.target.value)}
+            placeholder="Example: How often should I water tomato plants?"
+          />
+          <button disabled={isSubmitting || !question.trim()} className="rounded-xl bg-leaf-700 px-6 py-3 font-semibold text-white hover:bg-leaf-900 disabled:cursor-not-allowed disabled:opacity-60" type="submit">
+            {isSubmitting ? "Asking…" : "Ask"}
+          </button>
+        </form>
+      </div>
+    </section>
+  );
 }
 
 function SectionTitle({ eyebrow, title, detail }: { eyebrow: string; title: string; detail: string }) { return <div><p className="text-sm font-bold uppercase tracking-[0.15em] text-leaf-500">{eyebrow}</p><h1 className="mt-2 text-3xl font-bold tracking-tight text-leaf-900">{title}</h1><p className="mt-3 max-w-2xl leading-7 text-slate-600">{detail}</p></div>; }

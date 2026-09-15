@@ -3,7 +3,7 @@
 KrishiMitra is a local agricultural decision-support web application. Review 3 implements two evidence-focused modules:
 
 - Crop Health Intelligence — classifies an uploaded leaf image across 10 approved labels.
-- Citation-Grounded Agronomy Advisor — answers in-domain questions only from retrieved official agricultural material.
+- AI Agronomy Chatbot — sends agriculture questions to Gemini through the private FastAPI backend and keeps recent conversation context.
 
 ## Development approach
 
@@ -66,7 +66,18 @@ uvicorn app.main:app --reload --port 8000
 
 Open `http://127.0.0.1:8000/docs` and run the `GET /api/v1/health` endpoint. After training has produced the local model artefact, use `POST /api/v1/health/predict` to upload a leaf image. Every accepted prediction stores a scan ID, model version, confidence, label, and SHA-256 image reference in PostgreSQL; the uploaded image itself is not stored.
 
-Do not put a real Gemini key in Git. Later, place it only in `backend/.env`.
+### Configure the Gemini chatbot
+
+Create a Gemini API key in [Google AI Studio](https://aistudio.google.com/app/apikey). Copy `backend/.env.example` to `backend/.env`, then replace only the placeholder value:
+
+```dotenv
+GEMINI_API_KEY=your-real-key-here
+GEMINI_GENERATION_MODEL=gemini-2.5-flash
+```
+
+Restart the FastAPI backend after changing the file. Never put the key in React, `frontend/.env`, source code, screenshots, chat messages, or Git. The root `.gitignore` excludes `backend/.env`; only the placeholder `.env.example` is committed.
+
+The browser calls `POST /api/v1/advisor/chat`. FastAPI reads the secret locally, calls Gemini, stores the question and answer in PostgreSQL, and returns only the generated answer and public model name to the browser. This version is a general AI chatbot, not a citation-grounded retrieval system, so important advice must be independently verified.
 
 ## Prepare and train the crop-health model
 
@@ -107,4 +118,4 @@ The API rejects images without enough visible plant-colour content and rejects f
 
 To recognise Northern Leaf Blight reliably, add a labeled Northern Leaf Blight class (and representative field photos/negative examples), retrain, calibrate on held-out field data, and evaluate an explicit unknown/out-of-distribution rejection rule before publishing a new model version.
 
-The initial Review 3 database migration also creates the provenance tables needed for Module 3. The next increment is ingesting reviewed official documents and implementing retrieval with citations.
+Module 3 now provides a Gemini-backed agriculture chatbot with recent conversational context and PostgreSQL message storage. The existing pgvector document schema remains available for a future citation-grounded retrieval upgrade.
