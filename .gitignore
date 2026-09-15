@@ -36,6 +36,11 @@ postgres_data/
 .DS_Store
 Thumbs.db
 
+# Local artifact generation and verification workspaces
+.codex-doc-build/
+.codex-finalizer/
+.codex-ppt-build/
+
 # Downloaded installers and archives
 python-*.exe
 Python-*.tar.xz
