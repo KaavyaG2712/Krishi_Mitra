@@ -80,7 +80,7 @@ def chat_with_advisor(
             model=settings.gemini_generation_model,
         )
     except AdvisorGenerationError as error:
-        raise HTTPException(status_code=502, detail=str(error)) from error
+        raise HTTPException(status_code=error.status_code, detail=str(error)) from error
 
     message = AdvisorMessage(
         conversation_id=conversation.id,

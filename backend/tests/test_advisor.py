@@ -34,7 +34,7 @@ def test_advisor_requires_api_key(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(
         advisor,
         "get_settings",
-        lambda: SimpleNamespace(gemini_api_key=None, gemini_generation_model="gemini-2.5-flash"),
+        lambda: SimpleNamespace(gemini_api_key=None, gemini_generation_model="gemini-3.6-flash"),
     )
 
     response = TestClient(app).post("/api/v1/advisor/chat", json={"question": "How should I water tomatoes?"})
@@ -48,7 +48,7 @@ def test_advisor_creates_conversation_and_message(monkeypatch: pytest.MonkeyPatc
     monkeypatch.setattr(
         advisor,
         "get_settings",
-        lambda: SimpleNamespace(gemini_api_key="test-key", gemini_generation_model="gemini-2.5-flash"),
+        lambda: SimpleNamespace(gemini_api_key="test-key", gemini_generation_model="gemini-3.6-flash"),
     )
     monkeypatch.setattr(
         advisor,
@@ -69,5 +69,5 @@ def test_advisor_creates_conversation_and_message(monkeypatch: pytest.MonkeyPatc
     assert payload["conversation_id"]
     assert payload["message_id"]
     assert "morning" in payload["answer"]
-    assert payload["generation_model"] == "gemini-2.5-flash"
+    assert payload["generation_model"] == "gemini-3.6-flash"
     assert len(session.items) == 2

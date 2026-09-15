@@ -26,6 +26,35 @@ officer, or qualified professional. State important uncertainty clearly.
 class AdvisorGenerationError(RuntimeError):
     """Raised when Gemini does not return a usable advisor response."""
 
+    def __init__(self, message: str, *, status_code: int = 502) -> None:
+        super().__init__(message)
+        self.status_code = status_code
+
+
+def _provider_error(error: Exception, model: str) -> AdvisorGenerationError:
+    code = getattr(error, "code", None)
+    if code == 404:
+        return AdvisorGenerationError(
+            f"The configured Gemini model '{model}' is unavailable. Update GEMINI_GENERATION_MODEL in backend/.env.",
+            status_code=503,
+        )
+    if code in {401, 403}:
+        return AdvisorGenerationError(
+            "Gemini rejected the API credentials. Check GEMINI_API_KEY and its project restrictions.",
+            status_code=503,
+        )
+    if code == 429:
+        return AdvisorGenerationError(
+            "The Gemini API rate limit or quota was reached. Wait briefly or check the API project's usage limits.",
+            status_code=429,
+        )
+    if code == 503:
+        return AdvisorGenerationError(
+            f"Gemini model '{model}' is temporarily busy. Please try again shortly.",
+            status_code=503,
+        )
+    return AdvisorGenerationError("The AI service could not generate a response.")
+
 
 def _conversation_prompt(question: str, history: Sequence[AdvisorMessage]) -> str:
     turns: list[str] = []
@@ -56,7 +85,7 @@ def generate_advisor_answer(
         )
         answer = (response.text or "").strip()
     except Exception as error:
-        raise AdvisorGenerationError("The AI service could not generate a response.") from error
+        raise _provider_error(error, model) from error
 
     if not answer:
         raise AdvisorGenerationError("The AI service returned an empty response.")

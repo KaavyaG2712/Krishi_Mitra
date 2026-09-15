@@ -72,7 +72,7 @@ Create a Gemini API key in [Google AI Studio](https://aistudio.google.com/app/ap
 
 ```dotenv
 GEMINI_API_KEY=your-real-key-here
-GEMINI_GENERATION_MODEL=gemini-2.5-flash
+GEMINI_GENERATION_MODEL=gemini-3.6-flash
 ```
 
 Restart the FastAPI backend after changing the file. Never put the key in React, `frontend/.env`, source code, screenshots, chat messages, or Git. The root `.gitignore` excludes `backend/.env`; only the placeholder `.env.example` is committed.
