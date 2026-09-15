@@ -18,7 +18,10 @@ try {
 
     Set-Location $frontendDirectory
     Write-Host "Starting KrishiMitra web app at http://localhost:5173" -ForegroundColor Cyan
-    & $npmCommand.Source run dev -- --host 127.0.0.1 --port 5173 --strictPort
+    # Calling `npm run ... -- --host 127.0.0.1` through Windows PowerShell can
+    # strip the option names and make Vite treat `127.0.0.1` as its root folder.
+    # Invoke the checked-in Vite shim directly so its CLI flags arrive intact.
+    & $viteExecutable "--host=127.0.0.1" "--port=5173" "--strictPort"
 
     if ($LASTEXITCODE -ne 0) {
         throw "The frontend server exited with code $LASTEXITCODE."

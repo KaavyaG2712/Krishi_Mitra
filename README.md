@@ -103,6 +103,8 @@ Module 1 now supports the full local flow: browser → FastAPI → MobileNetV2 m
 
 Version `mobilenetv2-10class-v1` can only distinguish these conditions: Tomato (Healthy, Early Blight, Late Blight), Potato (Healthy, Early Blight, Late Blight), Maize (Healthy, Common Rust), and Grape (Healthy, Black Rot). It has **no Northern Leaf Blight class**, so a northern-leaf-blight photo may be forced into the closest known maize class with a high softmax score. That score is relative to the limited known labels, not proof that the disease is Common Rust. The app rejects grayscale images because its model was trained with colour images only.
 
+The API rejects images without enough visible plant-colour content and rejects flat, blurred, or illustration-like inputs before inference. Results below the configured `HEALTH_CONFIDENCE_THRESHOLD` (default `0.75`) are returned as visibly tentative classifier results so genuine field leaves are not silently discarded. These safeguards prevent obvious cars and drawings from being presented as diagnoses while preserving uncertain leaf results for review; they are not a substitute for training and evaluating a dedicated leaf/non-leaf out-of-distribution detector with representative negative and field-image data.
+
 To recognise Northern Leaf Blight reliably, add a labeled Northern Leaf Blight class (and representative field photos/negative examples), retrain, calibrate on held-out field data, and evaluate an explicit unknown/out-of-distribution rejection rule before publishing a new model version.
 
 The initial Review 3 database migration also creates the provenance tables needed for Module 3. The next increment is ingesting reviewed official documents and implementing retrieval with citations.

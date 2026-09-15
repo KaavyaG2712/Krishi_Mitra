@@ -65,7 +65,11 @@ async def predict_leaf(
             "a clear colour image of the selected crop."
         )
     elif confidence < settings.health_confidence_threshold:
-        reference = "Result uncertain. Please consult a local agricultural officer/KVK."
+        reference = (
+            "Low-confidence result: this is the classifier's closest supported label, not a confirmed "
+            "diagnosis. Try a sharper close-up leaf photo and consult a local agricultural officer/KVK "
+            "before making treatment decisions."
+        )
     else:
         unsupported_note = UNSUPPORTED_DISEASE_NOTES.get(
             detected_crop, "It cannot diagnose other diseases outside this limited label set."

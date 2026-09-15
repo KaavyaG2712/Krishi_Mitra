@@ -27,6 +27,35 @@ function Test-ListeningPort {
     }
 }
 
+function Test-HttpEndpoint {
+    param([Parameter(Mandatory)][string]$Uri)
+
+    try {
+        $response = Invoke-WebRequest -UseBasicParsing -Uri $Uri -TimeoutSec 3
+        return $response.StatusCode -ge 200 -and $response.StatusCode -lt 400
+    }
+    catch {
+        return $false
+    }
+}
+
+function Wait-HttpEndpoint {
+    param(
+        [Parameter(Mandatory)][string]$Uri,
+        [ValidateRange(1, 120)]
+        [int]$TimeoutSeconds = 30
+    )
+
+    $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
+    while ([DateTime]::UtcNow -lt $deadline) {
+        if (Test-HttpEndpoint -Uri $Uri) {
+            return $true
+        }
+        Start-Sleep -Seconds 1
+    }
+    return $false
+}
+
 function Test-BackendDependencies {
     param([Parameter(Mandatory)][string]$PythonExecutable)
 
@@ -201,20 +230,34 @@ try {
     }
 
     $windowsPowerShell = Get-Command powershell.exe -ErrorAction Stop
+    $backendHealthUri = "http://127.0.0.1:8000/api/v1/health"
     if (Test-ListeningPort -Port 8000) {
-        Write-Warning "Port 8000 is already listening. The existing backend was left running."
+        if (-not (Test-HttpEndpoint -Uri $backendHealthUri)) {
+            throw "Port 8000 is occupied, but it is not serving the KrishiMitra API. Stop the process using that port and run the launcher again."
+        }
+        Write-Warning "The KrishiMitra backend is already running on port 8000; it was left running."
     }
     else {
         Start-ServiceTerminal -Name "Backend" -RunnerPath $backendRunner -RepositoryRoot $repositoryRoot `
             -WorkingDirectory $backendDirectory -PowerShellExecutable $windowsPowerShell.Source
+        if (-not (Wait-HttpEndpoint -Uri $backendHealthUri)) {
+            throw "The backend terminal opened, but the KrishiMitra API did not become ready within 30 seconds. Read the Backend terminal for the exact error."
+        }
     }
 
+    $frontendUri = "http://127.0.0.1:5173/"
     if (Test-ListeningPort -Port 5173) {
-        Write-Warning "Port 5173 is already listening. The existing frontend was left running."
+        if (-not (Test-HttpEndpoint -Uri $frontendUri)) {
+            throw "Port 5173 is occupied, but it is not serving the KrishiMitra website. Stop the process using that port and run the launcher again."
+        }
+        Write-Warning "The KrishiMitra frontend is already running on port 5173; it was left running."
     }
     else {
         Start-ServiceTerminal -Name "Frontend" -RunnerPath $frontendRunner -RepositoryRoot $repositoryRoot `
             -WorkingDirectory $frontendDirectory -PowerShellExecutable $windowsPowerShell.Source
+        if (-not (Wait-HttpEndpoint -Uri $frontendUri)) {
+            throw "The frontend terminal opened, but the KrishiMitra website did not become ready within 30 seconds. Read the Frontend terminal for the exact error."
+        }
     }
 
     Write-Host ""

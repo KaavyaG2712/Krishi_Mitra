@@ -134,7 +134,7 @@ function Overview({ onNavigate }: { onNavigate: (view: View) => void }) {
       </section>
 
       <section className="grid gap-5 md:grid-cols-2">
-        <ModuleCard number="01" title="Crop Health Intelligence" detail="MobileNetV2 classifies supported Tomato, Potato, Maize, and Grape leaf conditions, then validates the detected crop against the crop you selected. Low-confidence or mismatch results direct the farmer to a KVK or agricultural officer." action="Open image upload" onClick={() => onNavigate("health")} />
+        <ModuleCard number="01" title="Crop Health Intelligence" detail="The input guard rejects obvious non-leaf images before MobileNetV2 compares supported Tomato, Potato, Maize, and Grape leaf conditions. Low-confidence outputs return no disease label; accepted results are validated against the crop you selected." action="Open image upload" onClick={() => onNavigate("health")} />
         <ModuleCard number="02" title="Citation-Grounded Advisor" detail="PostgreSQL + pgvector retrieves relevant excerpts from approved official documents before Gemini prepares an answer with source pages." action="Open advisor" onClick={() => onNavigate("advisor")} />
       </section>
     </>
@@ -208,10 +208,15 @@ function CropHealth() {
                   <p className="font-bold">Crop mismatch — do not use this as a diagnosis</p>
                   <p className="mt-1 leading-6">You selected <strong>{result.selected_crop ? formatCrop(result.selected_crop) : crop}</strong>, but the model detected <strong>{result.detected_crop ? formatCrop(result.detected_crop) : "a different supported crop"}</strong>. Choose the actual crop and analyse a clear leaf image again.</p>
                 </div>
+              ) : result.is_uncertain ? (
+                <div role="status" className="rounded-xl bg-amber-50 p-3 text-amber-950">
+                  <p className="font-bold">Low-confidence result — review only</p>
+                  <p className="mt-1 leading-6">The model returned its closest supported label, but this is not a confirmed diagnosis. Try a sharper close-up photograph.</p>
+                </div>
               ) : result.selected_crop && result.detected_crop ? <p className="rounded-xl bg-leaf-50 p-3 font-medium text-leaf-900">Crop validation passed: selected {formatCrop(result.selected_crop)} and detected {formatCrop(result.detected_crop)}.</p> : null}
-              <p className={`mt-3 text-lg font-bold ${result.crop_mismatch ? "text-amber-950" : "text-leaf-900"}`}>{result.crop_mismatch ? "Unvalidated classifier output" : result.predicted_label}</p>
+              <p className={`mt-3 text-lg font-bold ${result.crop_mismatch || result.is_uncertain ? "text-amber-950" : "text-leaf-900"}`}>{result.crop_mismatch ? "Unvalidated classifier output" : result.predicted_label}</p>
               {result.crop_mismatch && <p className="mt-1 leading-6 text-amber-900">Initial classifier label: {result.predicted_label}. It is displayed for transparency only, not as a disease diagnosis.</p>}
-              <p className="mt-1">Model score (within supported labels): <strong>{(result.confidence * 100).toFixed(1)}%</strong></p>
+              <p className="mt-1">Classifier confidence (accepted leaf only): <strong>{(result.confidence * 100).toFixed(1)}%</strong></p>
               <p className="mt-1">Model: {result.model_version}</p>
               {result.detected_crop && result.supported_conditions && <p className="mt-3 rounded-lg bg-soil-50 p-3 leading-6 text-soil-700"><strong>Model scope:</strong> for {formatCrop(result.detected_crop)}, this version only compares {result.supported_conditions.join(", ")}. A high score does not confirm diseases outside that list.</p>}
               <p className={`mt-3 rounded-lg p-3 ${result.is_uncertain || result.crop_mismatch ? "bg-amber-50 text-amber-900" : "bg-leaf-50 text-leaf-900"}`}>{result.advisory_reference}</p>
