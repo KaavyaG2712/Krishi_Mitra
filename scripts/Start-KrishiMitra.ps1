@@ -59,7 +59,22 @@ function Wait-HttpEndpoint {
 function Test-BackendDependencies {
     param([Parameter(Mandatory)][string]$PythonExecutable)
 
-    & $PythonExecutable -c "import alembic, fastapi, torch, torchvision, uvicorn" 2>$null
+    # Catch import errors inside Python. Windows PowerShell otherwise promotes
+    # redirected native stderr to a terminating error under ErrorAction=Stop.
+    # Image inference dependencies are optional and must not block soil/speech.
+    $dependencyProbe = @'
+import importlib, sys
+missing = []
+for name in ('alembic', 'fastapi', 'rasterio', 'uvicorn', 'google.genai', 'psycopg'):
+    try:
+        importlib.import_module(name)
+    except Exception:
+        missing.append(name)
+if missing:
+    print('Missing or broken backend packages: ' + ', '.join(missing))
+sys.exit(1 if missing else 0)
+'@
+    & $PythonExecutable -c $dependencyProbe | Out-Host
     return $LASTEXITCODE -eq 0
 }
 
@@ -69,9 +84,19 @@ function Invoke-Checked {
         [Parameter(Mandatory)][scriptblock]$Action
     )
 
-    & $Action
-    if ($LASTEXITCODE -ne 0) {
-        throw "$Description failed (exit code $LASTEXITCODE)."
+    $previousErrorPreference = $ErrorActionPreference
+    try {
+        # Docker, pip and Alembic write normal progress to stderr. Decide using
+        # their exit status instead of treating every stderr line as failure.
+        $ErrorActionPreference = "Continue"
+        & $Action
+        $commandExitCode = $LASTEXITCODE
+    }
+    finally {
+        $ErrorActionPreference = $previousErrorPreference
+    }
+    if ($commandExitCode -ne 0) {
+        throw "$Description failed (exit code $commandExitCode)."
     }
 }
 
@@ -88,13 +113,18 @@ function Start-ServiceTerminal {
     $escapedRepositoryRoot = $RepositoryRoot.Replace("'", "''")
     $command = "& '$escapedRunnerPath' -RepositoryRoot '$escapedRepositoryRoot'"
     $encodedCommand = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($command))
+    $logDirectory = Join-Path $RepositoryRoot ".codex-finalizer\logs"
+    New-Item -ItemType Directory -Path $logDirectory -Force | Out-Null
 
     Start-Process -FilePath $PowerShellExecutable `
         -WorkingDirectory $WorkingDirectory `
-        -ArgumentList @("-NoExit", "-NoLogo", "-NoProfile", "-ExecutionPolicy", "Bypass", "-EncodedCommand", $encodedCommand) |
+        -WindowStyle Hidden `
+        -RedirectStandardOutput (Join-Path $logDirectory "$Name.out.log") `
+        -RedirectStandardError (Join-Path $logDirectory "$Name.err.log") `
+        -ArgumentList @("-NoLogo", "-NoProfile", "-ExecutionPolicy", "Bypass", "-EncodedCommand", $encodedCommand) |
         Out-Null
 
-    Write-Status "$Name terminal opened."
+    Write-Status "$Name started in the background. Logs: $logDirectory"
 }
 
 try {
@@ -160,7 +190,7 @@ try {
         Write-Status "Installing backend Python packages. This can take several minutes on the first run."
         Push-Location $backendDirectory
         try {
-            Invoke-Checked "Installing backend Python packages" { & $backendPython -m pip install -e ".[dev,ml]" }
+            Invoke-Checked "Installing backend Python packages" { & $backendPython -m pip install -e ".[dev]" }
         }
         finally {
             Pop-Location
@@ -193,6 +223,11 @@ try {
 
     if (-not (Test-Path -LiteralPath $modelCheckpoint)) {
         Write-Warning "The trained model checkpoint is not present at $modelCheckpoint. The servers will start, but crop-image analysis will not work until the model is trained or restored."
+    }
+
+    & $backendPython -c "import importlib.util, sys; sys.exit(0 if all(importlib.util.find_spec(n) is not None for n in ('torch', 'torchvision')) else 1)"
+    if ($LASTEXITCODE -ne 0) {
+        Write-Warning 'Optional leaf-image packages are missing. Soil planning, speech and chat can start. For image analysis, run backend\.venv\Scripts\python.exe -m pip install -e "./backend[ml]" from the project folder.'
     }
 
     Push-Location $repositoryRoot
@@ -241,7 +276,7 @@ try {
         Start-ServiceTerminal -Name "Backend" -RunnerPath $backendRunner -RepositoryRoot $repositoryRoot `
             -WorkingDirectory $backendDirectory -PowerShellExecutable $windowsPowerShell.Source
         if (-not (Wait-HttpEndpoint -Uri $backendHealthUri)) {
-            throw "The backend terminal opened, but the KrishiMitra API did not become ready within 30 seconds. Read the Backend terminal for the exact error."
+            throw "The backend did not become ready within 30 seconds. Check .codex-finalizer\logs\Backend.err.log."
         }
     }
 
@@ -256,7 +291,7 @@ try {
         Start-ServiceTerminal -Name "Frontend" -RunnerPath $frontendRunner -RepositoryRoot $repositoryRoot `
             -WorkingDirectory $frontendDirectory -PowerShellExecutable $windowsPowerShell.Source
         if (-not (Wait-HttpEndpoint -Uri $frontendUri)) {
-            throw "The frontend terminal opened, but the KrishiMitra website did not become ready within 30 seconds. Read the Frontend terminal for the exact error."
+            throw "The frontend did not become ready within 30 seconds. Check .codex-finalizer\logs\Frontend.err.log."
         }
     }
 
@@ -264,7 +299,7 @@ try {
     Write-Host "KrishiMitra is ready:" -ForegroundColor Green
     Write-Host "  Website:  http://localhost:5173"
     Write-Host "  API docs: http://127.0.0.1:8000/docs"
-    Write-Host "Close the Backend or Frontend terminal to stop that server. Run 'docker compose down' from the repository root to stop the database."
+    Write-Host "Server logs: .codex-finalizer\logs. Servers run in the background. Run 'docker compose down' from the repository root to stop the database."
 
     if ($OpenBrowser) {
         Start-Process "http://localhost:5173"

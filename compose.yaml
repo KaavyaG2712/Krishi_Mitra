@@ -1,13 +1,12 @@
 services:
   db:
     image: pgvector/pgvector:pg16
-    container_name: krishimitra-db
     environment:
       POSTGRES_DB: krishimitra
       POSTGRES_USER: krishimitra
       POSTGRES_PASSWORD: krishimitra_local_only
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:

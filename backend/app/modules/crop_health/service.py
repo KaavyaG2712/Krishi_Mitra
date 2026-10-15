@@ -6,10 +6,7 @@ from io import BytesIO
 from pathlib import Path
 from threading import Lock
 
-import torch
 from PIL import Image, UnidentifiedImageError
-from torchvision.models import mobilenet_v2
-from torchvision.transforms import v2
 
 LABELS = ["tomato_healthy", "tomato_early_blight", "tomato_late_blight", "potato_healthy", "potato_early_blight", "potato_late_blight", "maize_healthy", "maize_common_rust", "grape_healthy", "grape_black_rot"]
 DISPLAY_LABELS = {label: label.replace("_", " ").title().replace("Maize", "Maize").replace("Grape", "Grape") for label in LABELS}
@@ -37,7 +34,7 @@ def is_grayscale(image: Image.Image) -> bool:
         return True
     sample = image.convert("RGB")
     sample.thumbnail((64, 64))
-    pixels = list(sample.getdata())
+    pixels = list(sample.get_flattened_data())
     if not pixels:
         return True
     average_chroma = sum(max(pixel) - min(pixel) for pixel in pixels) / len(pixels)
@@ -53,7 +50,7 @@ def vegetation_ratio(image: Image.Image) -> float:
     """
     sample = image.convert("RGB")
     sample.thumbnail((128, 128))
-    hsv_pixels = list(sample.convert("HSV").getdata())
+    hsv_pixels = list(sample.convert("HSV").get_flattened_data())
     if not hsv_pixels:
         return 0.0
 
@@ -74,7 +71,7 @@ def flat_neighbour_ratio(image: Image.Image) -> float:
     check so green cartoons are not treated as leaf photographs.
     """
     sample = image.convert("RGB").resize((128, 128), Image.Resampling.BILINEAR)
-    pixels = list(sample.getdata())
+    pixels = list(sample.get_flattened_data())
     width, height = sample.size
     flat_neighbours = 0
     neighbour_count = 0
@@ -103,9 +100,11 @@ def validate_image(contents: bytes) -> Image.Image:
     if not contents or len(contents) > MAX_IMAGE_BYTES:
         raise InvalidLeafImage("Upload a non-empty PNG, JPEG, or WebP image under 10 MB.")
     try:
-        image = Image.open(BytesIO(contents))
+        image = Image.open(BytesIO(contents), formats=("PNG", "JPEG", "WEBP"))
         image.verify()
-        decoded = Image.open(BytesIO(contents))
+        decoded = Image.open(BytesIO(contents), formats=("PNG", "JPEG", "WEBP"))
+        if decoded.width * decoded.height > 25_000_000:
+            raise InvalidLeafImage("Please resize the image to under 25 megapixels.")
         if is_grayscale(decoded):
             raise InvalidLeafImage(
                 "Upload a colour leaf photo. Grayscale images are outside this model's supported input range."
@@ -127,12 +126,15 @@ def validate_image(contents: bytes) -> Image.Image:
                 "a natural, in-focus colour photograph of one supported leaf."
             )
         return image
-    except (UnidentifiedImageError, OSError) as error:
+    except (UnidentifiedImageError, OSError, Image.DecompressionBombError) as error:
         raise InvalidLeafImage("The uploaded file is not a valid readable image.") from error
 
 
 @lru_cache
 def load_model(artifact_dir: Path) -> tuple[torch.nn.Module, v2.Compose]:
+    import torch
+    from torchvision.models import mobilenet_v2
+    from torchvision.transforms import v2
     checkpoint = artifact_dir / "best_model.pt"
     if not checkpoint.is_file():
         raise FileNotFoundError(f"Model artefact unavailable: {checkpoint}")
@@ -146,6 +148,7 @@ def load_model(artifact_dir: Path) -> tuple[torch.nn.Module, v2.Compose]:
 
 def predict(contents: bytes, artifact_dir: Path) -> tuple[str, float]:
     image = validate_image(contents)
+    import torch
     model, transform = load_model(artifact_dir)
     with _inference_lock, torch.inference_mode():
         probabilities = torch.softmax(model(transform(image).unsqueeze(0)), dim=1)[0]

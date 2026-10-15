@@ -2,7 +2,9 @@
 param(
     [Parameter(Mandatory)]
     [ValidateNotNullOrEmpty()]
-    [string]$RepositoryRoot
+    [string]$RepositoryRoot,
+    [ValidateRange(1, 65535)]
+    [int]$Port = 8000
 )
 
 $ErrorActionPreference = "Stop"
@@ -16,9 +18,9 @@ try {
     }
 
     Set-Location $backendDirectory
-    Write-Host "Starting KrishiMitra API at http://127.0.0.1:8000" -ForegroundColor Cyan
-    Write-Host "API documentation: http://127.0.0.1:8000/docs" -ForegroundColor Cyan
-    & $pythonExecutable -m uvicorn app.main:app --reload --port 8000
+    Write-Host "Starting KrishiMitra API at http://127.0.0.1:$Port" -ForegroundColor Cyan
+    Write-Host "API documentation: http://127.0.0.1:$Port/docs" -ForegroundColor Cyan
+    & $pythonExecutable -m uvicorn app.main:app --reload --port $Port
 
     if ($LASTEXITCODE -ne 0) {
         throw "The backend server exited with code $LASTEXITCODE."

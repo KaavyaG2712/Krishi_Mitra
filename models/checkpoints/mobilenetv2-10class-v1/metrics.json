@@ -1,0 +1,1686 @@
+{
+  "model": "mobilenet_v2",
+  "labels": [
+    "tomato_healthy",
+    "tomato_early_blight",
+    "tomato_late_blight",
+    "potato_healthy",
+    "potato_early_blight",
+    "potato_late_blight",
+    "maize_healthy",
+    "maize_common_rust",
+    "grape_healthy",
+    "grape_black_rot"
+  ],
+  "device": "cpu",
+  "best_validation_macro_f1": 0.9916443738940444,
+  "test": {
+    "accuracy": 0.9868007542426147,
+    "macro_precision": 0.9891495929120608,
+    "macro_recall": 0.983694913296565,
+    "macro_f1": 0.986263646597288,
+    "per_class": {
+      "tomato_healthy": {
+        "precision": 0.991701244813278,
+        "recall": 1.0,
+        "f1": 0.9958333333333333,
+        "support": 239
+      },
+      "tomato_early_blight": {
+        "precision": 0.9858156028368794,
+        "recall": 0.9266666666666666,
+        "f1": 0.9553264604810997,
+        "support": 150
+      },
+      "tomato_late_blight": {
+        "precision": 0.9724137931034482,
+        "recall": 0.986013986013986,
+        "f1": 0.9791666666666666,
+        "support": 286
+      },
+      "potato_healthy": {
+        "precision": 1.0,
+        "recall": 0.9565217391304348,
+        "f1": 0.9777777777777777,
+        "support": 23
+      },
+      "potato_early_blight": {
+        "precision": 0.9803921568627451,
+        "recall": 1.0,
+        "f1": 0.9900990099009901,
+        "support": 150
+      },
+      "potato_late_blight": {
+        "precision": 0.9668874172185431,
+        "recall": 0.9733333333333334,
+        "f1": 0.9700996677740864,
+        "support": 150
+      },
+      "maize_healthy": {
+        "precision": 0.9942857142857143,
+        "recall": 1.0,
+        "f1": 0.997134670487106,
+        "support": 174
+      },
+      "maize_common_rust": {
+        "precision": 1.0,
+        "recall": 0.994413407821229,
+        "f1": 0.9971988795518207,
+        "support": 179
+      },
+      "grape_healthy": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 63
+      },
+      "grape_black_rot": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 177
+      }
+    },
+    "classification_report": {
+      "tomato_healthy": {
+        "precision": 0.991701244813278,
+        "recall": 1.0,
+        "f1-score": 0.9958333333333333,
+        "support": 239.0
+      },
+      "tomato_early_blight": {
+        "precision": 0.9858156028368794,
+        "recall": 0.9266666666666666,
+        "f1-score": 0.9553264604810997,
+        "support": 150.0
+      },
+      "tomato_late_blight": {
+        "precision": 0.9724137931034482,
+        "recall": 0.986013986013986,
+        "f1-score": 0.9791666666666666,
+        "support": 286.0
+      },
+      "potato_healthy": {
+        "precision": 1.0,
+        "recall": 0.9565217391304348,
+        "f1-score": 0.9777777777777777,
+        "support": 23.0
+      },
+      "potato_early_blight": {
+        "precision": 0.9803921568627451,
+        "recall": 1.0,
+        "f1-score": 0.9900990099009901,
+        "support": 150.0
+      },
+      "potato_late_blight": {
+        "precision": 0.9668874172185431,
+        "recall": 0.9733333333333334,
+        "f1-score": 0.9700996677740864,
+        "support": 150.0
+      },
+      "maize_healthy": {
+        "precision": 0.9942857142857143,
+        "recall": 1.0,
+        "f1-score": 0.997134670487106,
+        "support": 174.0
+      },
+      "maize_common_rust": {
+        "precision": 1.0,
+        "recall": 0.994413407821229,
+        "f1-score": 0.9971988795518207,
+        "support": 179.0
+      },
+      "grape_healthy": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 63.0
+      },
+      "grape_black_rot": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 177.0
+      },
+      "accuracy": 0.9868007542426147,
+      "macro avg": {
+        "precision": 0.9891495929120608,
+        "recall": 0.983694913296565,
+        "f1-score": 0.986263646597288,
+        "support": 1591.0
+      },
+      "weighted avg": {
+        "precision": 0.9868616801768693,
+        "recall": 0.9868007542426147,
+        "f1-score": 0.98671497489012,
+        "support": 1591.0
+      }
+    },
+    "cpu_or_device_latency_ms": {
+      "p50": 40.8491031248559,
+      "p95": 43.51938750005502
+    }
+  },
+  "history": [
+    {
+      "stage": "head",
+      "epoch": 1,
+      "train_loss": 0.6976947818451523,
+      "validation": {
+        "accuracy": 0.944688874921433,
+        "macro_precision": 0.9509315635871987,
+        "macro_recall": 0.9378664523881914,
+        "macro_f1": 0.9426150579006712,
+        "per_class": {
+          "tomato_healthy": {
+            "precision": 0.9372549019607843,
+            "recall": 1.0,
+            "f1": 0.9676113360323887,
+            "support": 239
+          },
+          "tomato_early_blight": {
+            "precision": 0.9478260869565217,
+            "recall": 0.7266666666666667,
+            "f1": 0.8226415094339623,
+            "support": 150
+          },
+          "tomato_late_blight": {
+            "precision": 0.8688524590163934,
+            "recall": 0.9265734265734266,
+            "f1": 0.8967851099830795,
+            "support": 286
+          },
+          "potato_healthy": {
+            "precision": 0.9130434782608695,
+            "recall": 0.9130434782608695,
+            "f1": 0.9130434782608695,
+            "support": 23
+          },
+          "potato_early_blight": {
+            "precision": 0.9548387096774194,
+            "recall": 0.9866666666666667,
+            "f1": 0.9704918032786886,
+            "support": 150
+          },
+          "potato_late_blight": {
+            "precision": 0.9097222222222222,
+            "recall": 0.8733333333333333,
+            "f1": 0.891156462585034,
+            "support": 150
+          },
+          "maize_healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 174
+          },
+          "maize_common_rust": {
+            "precision": 0.9944444444444445,
+            "recall": 1.0,
+            "f1": 0.9972144846796658,
+            "support": 179
+          },
+          "grape_healthy": {
+            "precision": 1.0,
+            "recall": 0.9523809523809523,
+            "f1": 0.975609756097561,
+            "support": 63
+          },
+          "grape_black_rot": {
+            "precision": 0.9833333333333333,
+            "recall": 1.0,
+            "f1": 0.9915966386554622,
+            "support": 177
+          }
+        },
+        "classification_report": {
+          "tomato_healthy": {
+            "precision": 0.9372549019607843,
+            "recall": 1.0,
+            "f1-score": 0.9676113360323887,
+            "support": 239.0
+          },
+          "tomato_early_blight": {
+            "precision": 0.9478260869565217,
+            "recall": 0.7266666666666667,
+            "f1-score": 0.8226415094339623,
+            "support": 150.0
+          },
+          "tomato_late_blight": {
+            "precision": 0.8688524590163934,
+            "recall": 0.9265734265734266,
+            "f1-score": 0.8967851099830795,
+            "support": 286.0
+          },
+          "potato_healthy": {
+            "precision": 0.9130434782608695,
+            "recall": 0.9130434782608695,
+            "f1-score": 0.9130434782608695,
+            "support": 23.0
+          },
+          "potato_early_blight": {
+            "precision": 0.9548387096774194,
+            "recall": 0.9866666666666667,
+            "f1-score": 0.9704918032786886,
+            "support": 150.0
+          },
+          "potato_late_blight": {
+            "precision": 0.9097222222222222,
+            "recall": 0.8733333333333333,
+            "f1-score": 0.891156462585034,
+            "support": 150.0
+          },
+          "maize_healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 174.0
+          },
+          "maize_common_rust": {
+            "precision": 0.9944444444444445,
+            "recall": 1.0,
+            "f1-score": 0.9972144846796658,
+            "support": 179.0
+          },
+          "grape_healthy": {
+            "precision": 1.0,
+            "recall": 0.9523809523809523,
+            "f1-score": 0.975609756097561,
+            "support": 63.0
+          },
+          "grape_black_rot": {
+            "precision": 0.9833333333333333,
+            "recall": 1.0,
+            "f1-score": 0.9915966386554622,
+            "support": 177.0
+          },
+          "accuracy": 0.944688874921433,
+          "macro avg": {
+            "precision": 0.9509315635871987,
+            "recall": 0.9378664523881914,
+            "f1-score": 0.9426150579006712,
+            "support": 1591.0
+          },
+          "weighted avg": {
+            "precision": 0.9455746909059058,
+            "recall": 0.944688874921433,
+            "f1-score": 0.9433441417318528,
+            "support": 1591.0
+          }
+        },
+        "cpu_or_device_latency_ms": {
+          "p50": 41.304943750219536,
+          "p95": 53.90915312455036
+        }
+      }
+    },
+    {
+      "stage": "head",
+      "epoch": 2,
+      "train_loss": 0.2605025105101112,
+      "validation": {
+        "accuracy": 0.9516027655562539,
+        "macro_precision": 0.9483373457207463,
+        "macro_recall": 0.9480225185442576,
+        "macro_f1": 0.9475777253964409,
+        "per_class": {
+          "tomato_healthy": {
+            "precision": 0.9227799227799228,
+            "recall": 1.0,
+            "f1": 0.9598393574297188,
+            "support": 239
+          },
+          "tomato_early_blight": {
+            "precision": 0.8741721854304636,
+            "recall": 0.88,
+            "f1": 0.8770764119601329,
+            "support": 150
+          },
+          "tomato_late_blight": {
+            "precision": 0.9119718309859155,
+            "recall": 0.9055944055944056,
+            "f1": 0.9087719298245615,
+            "support": 286
+          },
+          "potato_healthy": {
+            "precision": 0.84,
+            "recall": 0.9130434782608695,
+            "f1": 0.875,
+            "support": 23
+          },
+          "potato_early_blight": {
+            "precision": 0.9863013698630136,
+            "recall": 0.96,
+            "f1": 0.972972972972973,
+            "support": 150
+          },
+          "potato_late_blight": {
+            "precision": 0.9481481481481482,
+            "recall": 0.8533333333333334,
+            "f1": 0.8982456140350877,
+            "support": 150
+          },
+          "maize_healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 174
+          },
+          "maize_common_rust": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 179
+          },
+          "grape_healthy": {
+            "precision": 1.0,
+            "recall": 0.9682539682539683,
+            "f1": 0.9838709677419355,
+            "support": 63
+          },
+          "grape_black_rot": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 177
+          }
+        },
+        "classification_report": {
+          "tomato_healthy": {
+            "precision": 0.9227799227799228,
+            "recall": 1.0,
+            "f1-score": 0.9598393574297188,
+            "support": 239.0
+          },
+          "tomato_early_blight": {
+            "precision": 0.8741721854304636,
+            "recall": 0.88,
+            "f1-score": 0.8770764119601329,
+            "support": 150.0
+          },
+          "tomato_late_blight": {
+            "precision": 0.9119718309859155,
+            "recall": 0.9055944055944056,
+            "f1-score": 0.9087719298245615,
+            "support": 286.0
+          },
+          "potato_healthy": {
+            "precision": 0.84,
+            "recall": 0.9130434782608695,
+            "f1-score": 0.875,
+            "support": 23.0
+          },
+          "potato_early_blight": {
+            "precision": 0.9863013698630136,
+            "recall": 0.96,
+            "f1-score": 0.972972972972973,
+            "support": 150.0
+          },
+          "potato_late_blight": {
+            "precision": 0.9481481481481482,
+            "recall": 0.8533333333333334,
+            "f1-score": 0.8982456140350877,
+            "support": 150.0
+          },
+          "maize_healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 174.0
+          },
+          "maize_common_rust": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 179.0
+          },
+          "grape_healthy": {
+            "precision": 1.0,
+            "recall": 0.9682539682539683,
+            "f1-score": 0.9838709677419355,
+            "support": 63.0
+          },
+          "grape_black_rot": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 177.0
+          },
+          "accuracy": 0.9516027655562539,
+          "macro avg": {
+            "precision": 0.9483373457207463,
+            "recall": 0.9480225185442576,
+            "f1-score": 0.9475777253964409,
+            "support": 1591.0
+          },
+          "weighted avg": {
+            "precision": 0.9522197364692755,
+            "recall": 0.9516027655562539,
+            "f1-score": 0.9513912628337514,
+            "support": 1591.0
+          }
+        },
+        "cpu_or_device_latency_ms": {
+          "p50": 40.247728124995774,
+          "p95": 41.76321562499652
+        }
+      }
+    },
+    {
+      "stage": "head",
+      "epoch": 3,
+      "train_loss": 0.20184416406260888,
+      "validation": {
+        "accuracy": 0.9516027655562539,
+        "macro_precision": 0.9554165078733469,
+        "macro_recall": 0.9485335147943843,
+        "macro_f1": 0.9501627494400753,
+        "per_class": {
+          "tomato_healthy": {
+            "precision": 0.93359375,
+            "recall": 1.0,
+            "f1": 0.9656565656565657,
+            "support": 239
+          },
+          "tomato_early_blight": {
+            "precision": 0.9323308270676691,
+            "recall": 0.8266666666666667,
+            "f1": 0.8763250883392226,
+            "support": 150
+          },
+          "tomato_late_blight": {
+            "precision": 0.8790849673202614,
+            "recall": 0.9405594405594405,
+            "f1": 0.9087837837837838,
+            "support": 286
+          },
+          "potato_healthy": {
+            "precision": 0.88,
+            "recall": 0.9565217391304348,
+            "f1": 0.9166666666666666,
+            "support": 23
+          },
+          "potato_early_blight": {
+            "precision": 0.9430379746835443,
+            "recall": 0.9933333333333333,
+            "f1": 0.9675324675324676,
+            "support": 150
+          },
+          "potato_late_blight": {
+            "precision": 0.9917355371900827,
+            "recall": 0.8,
+            "f1": 0.8856088560885609,
+            "support": 150
+          },
+          "maize_healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 174
+          },
+          "maize_common_rust": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 179
+          },
+          "grape_healthy": {
+            "precision": 1.0,
+            "recall": 0.9682539682539683,
+            "f1": 0.9838709677419355,
+            "support": 63
+          },
+          "grape_black_rot": {
+            "precision": 0.9943820224719101,
+            "recall": 1.0,
+            "f1": 0.9971830985915493,
+            "support": 177
+          }
+        },
+        "classification_report": {
+          "tomato_healthy": {
+            "precision": 0.93359375,
+            "recall": 1.0,
+            "f1-score": 0.9656565656565657,
+            "support": 239.0
+          },
+          "tomato_early_blight": {
+            "precision": 0.9323308270676691,
+            "recall": 0.8266666666666667,
+            "f1-score": 0.8763250883392226,
+            "support": 150.0
+          },
+          "tomato_late_blight": {
+            "precision": 0.8790849673202614,
+            "recall": 0.9405594405594405,
+            "f1-score": 0.9087837837837838,
+            "support": 286.0
+          },
+          "potato_healthy": {
+            "precision": 0.88,
+            "recall": 0.9565217391304348,
+            "f1-score": 0.9166666666666666,
+            "support": 23.0
+          },
+          "potato_early_blight": {
+            "precision": 0.9430379746835443,
+            "recall": 0.9933333333333333,
+            "f1-score": 0.9675324675324676,
+            "support": 150.0
+          },
+          "potato_late_blight": {
+            "precision": 0.9917355371900827,
+            "recall": 0.8,
+            "f1-score": 0.8856088560885609,
+            "support": 150.0
+          },
+          "maize_healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 174.0
+          },
+          "maize_common_rust": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 179.0
+          },
+          "grape_healthy": {
+            "precision": 1.0,
+            "recall": 0.9682539682539683,
+            "f1-score": 0.9838709677419355,
+            "support": 63.0
+          },
+          "grape_black_rot": {
+            "precision": 0.9943820224719101,
+            "recall": 1.0,
+            "f1-score": 0.9971830985915493,
+            "support": 177.0
+          },
+          "accuracy": 0.9516027655562539,
+          "macro avg": {
+            "precision": 0.9554165078733469,
+            "recall": 0.9485335147943843,
+            "f1-score": 0.9501627494400753,
+            "support": 1591.0
+          },
+          "weighted avg": {
+            "precision": 0.9533994190586532,
+            "recall": 0.9516027655562539,
+            "f1-score": 0.9507810533626012,
+            "support": 1591.0
+          }
+        },
+        "cpu_or_device_latency_ms": {
+          "p50": 47.41615625061968,
+          "p95": 54.900071874726564
+        }
+      }
+    },
+    {
+      "stage": "fine_tune",
+      "epoch": 1,
+      "train_loss": 0.1043201755695682,
+      "validation": {
+        "accuracy": 0.9679446888749215,
+        "macro_precision": 0.9643428671245438,
+        "macro_recall": 0.9663778443778444,
+        "macro_f1": 0.9637742663974617,
+        "per_class": {
+          "tomato_healthy": {
+            "precision": 0.956,
+            "recall": 1.0,
+            "f1": 0.9775051124744376,
+            "support": 239
+          },
+          "tomato_early_blight": {
+            "precision": 0.9689922480620154,
+            "recall": 0.8333333333333334,
+            "f1": 0.8960573476702509,
+            "support": 150
+          },
+          "tomato_late_blight": {
+            "precision": 0.9238410596026491,
+            "recall": 0.9755244755244755,
+            "f1": 0.9489795918367347,
+            "support": 286
+          },
+          "potato_healthy": {
+            "precision": 0.8518518518518519,
+            "recall": 1.0,
+            "f1": 0.92,
+            "support": 23
+          },
+          "potato_early_blight": {
+            "precision": 0.9615384615384616,
+            "recall": 1.0,
+            "f1": 0.9803921568627451,
+            "support": 150
+          },
+          "potato_late_blight": {
+            "precision": 0.9925373134328358,
+            "recall": 0.8866666666666667,
+            "f1": 0.9366197183098591,
+            "support": 150
+          },
+          "maize_healthy": {
+            "precision": 0.9942857142857143,
+            "recall": 1.0,
+            "f1": 0.997134670487106,
+            "support": 174
+          },
+          "maize_common_rust": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 179
+          },
+          "grape_healthy": {
+            "precision": 1.0,
+            "recall": 0.9682539682539683,
+            "f1": 0.9838709677419355,
+            "support": 63
+          },
+          "grape_black_rot": {
+            "precision": 0.9943820224719101,
+            "recall": 1.0,
+            "f1": 0.9971830985915493,
+            "support": 177
+          }
+        },
+        "classification_report": {
+          "tomato_healthy": {
+            "precision": 0.956,
+            "recall": 1.0,
+            "f1-score": 0.9775051124744376,
+            "support": 239.0
+          },
+          "tomato_early_blight": {
+            "precision": 0.9689922480620154,
+            "recall": 0.8333333333333334,
+            "f1-score": 0.8960573476702509,
+            "support": 150.0
+          },
+          "tomato_late_blight": {
+            "precision": 0.9238410596026491,
+            "recall": 0.9755244755244755,
+            "f1-score": 0.9489795918367347,
+            "support": 286.0
+          },
+          "potato_healthy": {
+            "precision": 0.8518518518518519,
+            "recall": 1.0,
+            "f1-score": 0.92,
+            "support": 23.0
+          },
+          "potato_early_blight": {
+            "precision": 0.9615384615384616,
+            "recall": 1.0,
+            "f1-score": 0.9803921568627451,
+            "support": 150.0
+          },
+          "potato_late_blight": {
+            "precision": 0.9925373134328358,
+            "recall": 0.8866666666666667,
+            "f1-score": 0.9366197183098591,
+            "support": 150.0
+          },
+          "maize_healthy": {
+            "precision": 0.9942857142857143,
+            "recall": 1.0,
+            "f1-score": 0.997134670487106,
+            "support": 174.0
+          },
+          "maize_common_rust": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 179.0
+          },
+          "grape_healthy": {
+            "precision": 1.0,
+            "recall": 0.9682539682539683,
+            "f1-score": 0.9838709677419355,
+            "support": 63.0
+          },
+          "grape_black_rot": {
+            "precision": 0.9943820224719101,
+            "recall": 1.0,
+            "f1-score": 0.9971830985915493,
+            "support": 177.0
+          },
+          "accuracy": 0.9679446888749215,
+          "macro avg": {
+            "precision": 0.9643428671245438,
+            "recall": 0.9663778443778444,
+            "f1-score": 0.9637742663974617,
+            "support": 1591.0
+          },
+          "weighted avg": {
+            "precision": 0.9690551045614013,
+            "recall": 0.9679446888749215,
+            "f1-score": 0.9674035076406836,
+            "support": 1591.0
+          }
+        },
+        "cpu_or_device_latency_ms": {
+          "p50": 40.3632812503929,
+          "p95": 42.81930312481563
+        }
+      }
+    },
+    {
+      "stage": "fine_tune",
+      "epoch": 2,
+      "train_loss": 0.05767084686535757,
+      "validation": {
+        "accuracy": 0.9811439346323068,
+        "macro_precision": 0.9820941371088143,
+        "macro_recall": 0.9822191142191142,
+        "macro_f1": 0.9819025724703337,
+        "per_class": {
+          "tomato_healthy": {
+            "precision": 0.9755102040816327,
+            "recall": 1.0,
+            "f1": 0.987603305785124,
+            "support": 239
+          },
+          "tomato_early_blight": {
+            "precision": 0.9785714285714285,
+            "recall": 0.9133333333333333,
+            "f1": 0.9448275862068966,
+            "support": 150
+          },
+          "tomato_late_blight": {
+            "precision": 0.9554794520547946,
+            "recall": 0.9755244755244755,
+            "f1": 0.9653979238754326,
+            "support": 286
+          },
+          "potato_healthy": {
+            "precision": 0.9583333333333334,
+            "recall": 1.0,
+            "f1": 0.9787234042553191,
+            "support": 23
+          },
+          "potato_early_blight": {
+            "precision": 0.974025974025974,
+            "recall": 1.0,
+            "f1": 0.9868421052631579,
+            "support": 150
+          },
+          "potato_late_blight": {
+            "precision": 0.9790209790209791,
+            "recall": 0.9333333333333333,
+            "f1": 0.9556313993174061,
+            "support": 150
+          },
+          "maize_healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 174
+          },
+          "maize_common_rust": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 179
+          },
+          "grape_healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 63
+          },
+          "grape_black_rot": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 177
+          }
+        },
+        "classification_report": {
+          "tomato_healthy": {
+            "precision": 0.9755102040816327,
+            "recall": 1.0,
+            "f1-score": 0.987603305785124,
+            "support": 239.0
+          },
+          "tomato_early_blight": {
+            "precision": 0.9785714285714285,
+            "recall": 0.9133333333333333,
+            "f1-score": 0.9448275862068966,
+            "support": 150.0
+          },
+          "tomato_late_blight": {
+            "precision": 0.9554794520547946,
+            "recall": 0.9755244755244755,
+            "f1-score": 0.9653979238754326,
+            "support": 286.0
+          },
+          "potato_healthy": {
+            "precision": 0.9583333333333334,
+            "recall": 1.0,
+            "f1-score": 0.9787234042553191,
+            "support": 23.0
+          },
+          "potato_early_blight": {
+            "precision": 0.974025974025974,
+            "recall": 1.0,
+            "f1-score": 0.9868421052631579,
+            "support": 150.0
+          },
+          "potato_late_blight": {
+            "precision": 0.9790209790209791,
+            "recall": 0.9333333333333333,
+            "f1-score": 0.9556313993174061,
+            "support": 150.0
+          },
+          "maize_healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 174.0
+          },
+          "maize_common_rust": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 179.0
+          },
+          "grape_healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 63.0
+          },
+          "grape_black_rot": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 177.0
+          },
+          "accuracy": 0.9811439346323068,
+          "macro avg": {
+            "precision": 0.9820941371088143,
+            "recall": 0.9822191142191142,
+            "f1-score": 0.9819025724703337,
+            "support": 1591.0
+          },
+          "weighted avg": {
+            "precision": 0.9812686901147739,
+            "recall": 0.9811439346323068,
+            "f1-score": 0.9809847883262159,
+            "support": 1591.0
+          }
+        },
+        "cpu_or_device_latency_ms": {
+          "p50": 40.27966562534857,
+          "p95": 43.123493749590125
+        }
+      }
+    },
+    {
+      "stage": "fine_tune",
+      "epoch": 3,
+      "train_loss": 0.037918582848549466,
+      "validation": {
+        "accuracy": 0.983029541169076,
+        "macro_precision": 0.9848261540042198,
+        "macro_recall": 0.9832680652680652,
+        "macro_f1": 0.9836332754239592,
+        "per_class": {
+          "tomato_healthy": {
+            "precision": 0.9715447154471545,
+            "recall": 1.0,
+            "f1": 0.9855670103092784,
+            "support": 239
+          },
+          "tomato_early_blight": {
+            "precision": 0.9925373134328358,
+            "recall": 0.8866666666666667,
+            "f1": 0.9366197183098591,
+            "support": 150
+          },
+          "tomato_late_blight": {
+            "precision": 0.9527027027027027,
+            "recall": 0.986013986013986,
+            "f1": 0.9690721649484536,
+            "support": 286
+          },
+          "potato_healthy": {
+            "precision": 0.9583333333333334,
+            "recall": 1.0,
+            "f1": 0.9787234042553191,
+            "support": 23
+          },
+          "potato_early_blight": {
+            "precision": 0.9868421052631579,
+            "recall": 1.0,
+            "f1": 0.9933774834437086,
+            "support": 150
+          },
+          "potato_late_blight": {
+            "precision": 0.9863013698630136,
+            "recall": 0.96,
+            "f1": 0.972972972972973,
+            "support": 150
+          },
+          "maize_healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 174
+          },
+          "maize_common_rust": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 179
+          },
+          "grape_healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 63
+          },
+          "grape_black_rot": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 177
+          }
+        },
+        "classification_report": {
+          "tomato_healthy": {
+            "precision": 0.9715447154471545,
+            "recall": 1.0,
+            "f1-score": 0.9855670103092784,
+            "support": 239.0
+          },
+          "tomato_early_blight": {
+            "precision": 0.9925373134328358,
+            "recall": 0.8866666666666667,
+            "f1-score": 0.9366197183098591,
+            "support": 150.0
+          },
+          "tomato_late_blight": {
+            "precision": 0.9527027027027027,
+            "recall": 0.986013986013986,
+            "f1-score": 0.9690721649484536,
+            "support": 286.0
+          },
+          "potato_healthy": {
+            "precision": 0.9583333333333334,
+            "recall": 1.0,
+            "f1-score": 0.9787234042553191,
+            "support": 23.0
+          },
+          "potato_early_blight": {
+            "precision": 0.9868421052631579,
+            "recall": 1.0,
+            "f1-score": 0.9933774834437086,
+            "support": 150.0
+          },
+          "potato_late_blight": {
+            "precision": 0.9863013698630136,
+            "recall": 0.96,
+            "f1-score": 0.972972972972973,
+            "support": 150.0
+          },
+          "maize_healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 174.0
+          },
+          "maize_common_rust": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 179.0
+          },
+          "grape_healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 63.0
+          },
+          "grape_black_rot": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 177.0
+          },
+          "accuracy": 0.983029541169076,
+          "macro avg": {
+            "precision": 0.9848261540042198,
+            "recall": 0.9832680652680652,
+            "f1-score": 0.9836332754239592,
+            "support": 1591.0
+          },
+          "weighted avg": {
+            "precision": 0.9833852576463612,
+            "recall": 0.983029541169076,
+            "f1-score": 0.9828166682250338,
+            "support": 1591.0
+          }
+        },
+        "cpu_or_device_latency_ms": {
+          "p50": 40.28590312555025,
+          "p95": 44.50151875062147
+        }
+      }
+    },
+    {
+      "stage": "fine_tune",
+      "epoch": 4,
+      "train_loss": 0.033676428783805855,
+      "validation": {
+        "accuracy": 0.9805153991200503,
+        "macro_precision": 0.9826034251162646,
+        "macro_recall": 0.9813434386842207,
+        "macro_f1": 0.9816426478316995,
+        "per_class": {
+          "tomato_healthy": {
+            "precision": 0.9676113360323887,
+            "recall": 1.0,
+            "f1": 0.9835390946502057,
+            "support": 239
+          },
+          "tomato_early_blight": {
+            "precision": 0.9782608695652174,
+            "recall": 0.9,
+            "f1": 0.9375,
+            "support": 150
+          },
+          "tomato_late_blight": {
+            "precision": 0.9523809523809523,
+            "recall": 0.9790209790209791,
+            "f1": 0.9655172413793104,
+            "support": 286
+          },
+          "potato_healthy": {
+            "precision": 0.9583333333333334,
+            "recall": 1.0,
+            "f1": 0.9787234042553191,
+            "support": 23
+          },
+          "potato_early_blight": {
+            "precision": 0.9933774834437086,
+            "recall": 1.0,
+            "f1": 0.9966777408637874,
+            "support": 150
+          },
+          "potato_late_blight": {
+            "precision": 0.9929577464788732,
+            "recall": 0.94,
+            "f1": 0.9657534246575342,
+            "support": 150
+          },
+          "maize_healthy": {
+            "precision": 0.9942857142857143,
+            "recall": 1.0,
+            "f1": 0.997134670487106,
+            "support": 174
+          },
+          "maize_common_rust": {
+            "precision": 1.0,
+            "recall": 0.994413407821229,
+            "f1": 0.9971988795518207,
+            "support": 179
+          },
+          "grape_healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 63
+          },
+          "grape_black_rot": {
+            "precision": 0.9888268156424581,
+            "recall": 1.0,
+            "f1": 0.9943820224719101,
+            "support": 177
+          }
+        },
+        "classification_report": {
+          "tomato_healthy": {
+            "precision": 0.9676113360323887,
+            "recall": 1.0,
+            "f1-score": 0.9835390946502057,
+            "support": 239.0
+          },
+          "tomato_early_blight": {
+            "precision": 0.9782608695652174,
+            "recall": 0.9,
+            "f1-score": 0.9375,
+            "support": 150.0
+          },
+          "tomato_late_blight": {
+            "precision": 0.9523809523809523,
+            "recall": 0.9790209790209791,
+            "f1-score": 0.9655172413793104,
+            "support": 286.0
+          },
+          "potato_healthy": {
+            "precision": 0.9583333333333334,
+            "recall": 1.0,
+            "f1-score": 0.9787234042553191,
+            "support": 23.0
+          },
+          "potato_early_blight": {
+            "precision": 0.9933774834437086,
+            "recall": 1.0,
+            "f1-score": 0.9966777408637874,
+            "support": 150.0
+          },
+          "potato_late_blight": {
+            "precision": 0.9929577464788732,
+            "recall": 0.94,
+            "f1-score": 0.9657534246575342,
+            "support": 150.0
+          },
+          "maize_healthy": {
+            "precision": 0.9942857142857143,
+            "recall": 1.0,
+            "f1-score": 0.997134670487106,
+            "support": 174.0
+          },
+          "maize_common_rust": {
+            "precision": 1.0,
+            "recall": 0.994413407821229,
+            "f1-score": 0.9971988795518207,
+            "support": 179.0
+          },
+          "grape_healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 63.0
+          },
+          "grape_black_rot": {
+            "precision": 0.9888268156424581,
+            "recall": 1.0,
+            "f1-score": 0.9943820224719101,
+            "support": 177.0
+          },
+          "accuracy": 0.9805153991200503,
+          "macro avg": {
+            "precision": 0.9826034251162646,
+            "recall": 0.9813434386842207,
+            "f1-score": 0.9816426478316995,
+            "support": 1591.0
+          },
+          "weighted avg": {
+            "precision": 0.9807663129710616,
+            "recall": 0.9805153991200503,
+            "f1-score": 0.9803329590597191,
+            "support": 1591.0
+          }
+        },
+        "cpu_or_device_latency_ms": {
+          "p50": 40.71338437461236,
+          "p95": 47.63999999977386
+        }
+      }
+    },
+    {
+      "stage": "fine_tune",
+      "epoch": 5,
+      "train_loss": 0.025858744575126793,
+      "validation": {
+        "accuracy": 0.9924575738529227,
+        "macro_precision": 0.9908605926526395,
+        "macro_recall": 0.9926340326340327,
+        "macro_f1": 0.9916443738940444,
+        "per_class": {
+          "tomato_healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 239
+          },
+          "tomato_early_blight": {
+            "precision": 1.0,
+            "recall": 0.9733333333333334,
+            "f1": 0.9864864864864865,
+            "support": 150
+          },
+          "tomato_late_blight": {
+            "precision": 0.9759450171821306,
+            "recall": 0.993006993006993,
+            "f1": 0.9844020797227037,
+            "support": 286
+          },
+          "potato_healthy": {
+            "precision": 0.9583333333333334,
+            "recall": 1.0,
+            "f1": 0.9787234042553191,
+            "support": 23
+          },
+          "potato_early_blight": {
+            "precision": 0.9868421052631579,
+            "recall": 1.0,
+            "f1": 0.9933774834437086,
+            "support": 150
+          },
+          "potato_late_blight": {
+            "precision": 0.993103448275862,
+            "recall": 0.96,
+            "f1": 0.976271186440678,
+            "support": 150
+          },
+          "maize_healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 174
+          },
+          "maize_common_rust": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 179
+          },
+          "grape_healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 63
+          },
+          "grape_black_rot": {
+            "precision": 0.9943820224719101,
+            "recall": 1.0,
+            "f1": 0.9971830985915493,
+            "support": 177
+          }
+        },
+        "classification_report": {
+          "tomato_healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 239.0
+          },
+          "tomato_early_blight": {
+            "precision": 1.0,
+            "recall": 0.9733333333333334,
+            "f1-score": 0.9864864864864865,
+            "support": 150.0
+          },
+          "tomato_late_blight": {
+            "precision": 0.9759450171821306,
+            "recall": 0.993006993006993,
+            "f1-score": 0.9844020797227037,
+            "support": 286.0
+          },
+          "potato_healthy": {
+            "precision": 0.9583333333333334,
+            "recall": 1.0,
+            "f1-score": 0.9787234042553191,
+            "support": 23.0
+          },
+          "potato_early_blight": {
+            "precision": 0.9868421052631579,
+            "recall": 1.0,
+            "f1-score": 0.9933774834437086,
+            "support": 150.0
+          },
+          "potato_late_blight": {
+            "precision": 0.993103448275862,
+            "recall": 0.96,
+            "f1-score": 0.976271186440678,
+            "support": 150.0
+          },
+          "maize_healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 174.0
+          },
+          "maize_common_rust": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 179.0
+          },
+          "grape_healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 63.0
+          },
+          "grape_black_rot": {
+            "precision": 0.9943820224719101,
+            "recall": 1.0,
+            "f1-score": 0.9971830985915493,
+            "support": 177.0
+          },
+          "accuracy": 0.9924575738529227,
+          "macro avg": {
+            "precision": 0.9908605926526395,
+            "recall": 0.9926340326340327,
+            "f1-score": 0.9916443738940444,
+            "support": 1591.0
+          },
+          "weighted avg": {
+            "precision": 0.992557757755586,
+            "recall": 0.9924575738529227,
+            "f1-score": 0.9924395443148339,
+            "support": 1591.0
+          }
+        },
+        "cpu_or_device_latency_ms": {
+          "p50": 39.75857187560905,
+          "p95": 42.24359999989247
+        }
+      }
+    },
+    {
+      "stage": "fine_tune",
+      "epoch": 6,
+      "train_loss": 0.023264305970051077,
+      "validation": {
+        "accuracy": 0.9905719673161534,
+        "macro_precision": 0.989233058910998,
+        "macro_recall": 0.990951048951049,
+        "macro_f1": 0.9899861916352913,
+        "per_class": {
+          "tomato_healthy": {
+            "precision": 0.991701244813278,
+            "recall": 1.0,
+            "f1": 0.9958333333333333,
+            "support": 239
+          },
+          "tomato_early_blight": {
+            "precision": 0.9795918367346939,
+            "recall": 0.96,
+            "f1": 0.9696969696969697,
+            "support": 150
+          },
+          "tomato_late_blight": {
+            "precision": 0.9758620689655172,
+            "recall": 0.9895104895104895,
+            "f1": 0.9826388888888888,
+            "support": 286
+          },
+          "potato_healthy": {
+            "precision": 0.9583333333333334,
+            "recall": 1.0,
+            "f1": 0.9787234042553191,
+            "support": 23
+          },
+          "potato_early_blight": {
+            "precision": 0.9868421052631579,
+            "recall": 1.0,
+            "f1": 0.9933774834437086,
+            "support": 150
+          },
+          "potato_late_blight": {
+            "precision": 1.0,
+            "recall": 0.96,
+            "f1": 0.9795918367346939,
+            "support": 150
+          },
+          "maize_healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 174
+          },
+          "maize_common_rust": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 179
+          },
+          "grape_healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 63
+          },
+          "grape_black_rot": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 177
+          }
+        },
+        "classification_report": {
+          "tomato_healthy": {
+            "precision": 0.991701244813278,
+            "recall": 1.0,
+            "f1-score": 0.9958333333333333,
+            "support": 239.0
+          },
+          "tomato_early_blight": {
+            "precision": 0.9795918367346939,
+            "recall": 0.96,
+            "f1-score": 0.9696969696969697,
+            "support": 150.0
+          },
+          "tomato_late_blight": {
+            "precision": 0.9758620689655172,
+            "recall": 0.9895104895104895,
+            "f1-score": 0.9826388888888888,
+            "support": 286.0
+          },
+          "potato_healthy": {
+            "precision": 0.9583333333333334,
+            "recall": 1.0,
+            "f1-score": 0.9787234042553191,
+            "support": 23.0
+          },
+          "potato_early_blight": {
+            "precision": 0.9868421052631579,
+            "recall": 1.0,
+            "f1-score": 0.9933774834437086,
+            "support": 150.0
+          },
+          "potato_late_blight": {
+            "precision": 1.0,
+            "recall": 0.96,
+            "f1-score": 0.9795918367346939,
+            "support": 150.0
+          },
+          "maize_healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 174.0
+          },
+          "maize_common_rust": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 179.0
+          },
+          "grape_healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 63.0
+          },
+          "grape_black_rot": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 177.0
+          },
+          "accuracy": 0.9905719673161534,
+          "macro avg": {
+            "precision": 0.989233058910998,
+            "recall": 0.990951048951049,
+            "f1-score": 0.9899861916352913,
+            "support": 1591.0
+          },
+          "weighted avg": {
+            "precision": 0.9906473332500665,
+            "recall": 0.9905719673161534,
+            "f1-score": 0.9905402078366229,
+            "support": 1591.0
+          }
+        },
+        "cpu_or_device_latency_ms": {
+          "p50": 40.19754062483116,
+          "p95": 43.391840625190525
+        }
+      }
+    },
+    {
+      "stage": "fine_tune",
+      "epoch": 7,
+      "train_loss": 0.016256748924742354,
+      "validation": {
+        "accuracy": 0.9912005028284098,
+        "macro_precision": 0.9896822899078934,
+        "macro_recall": 0.9922517482517483,
+        "macro_f1": 0.9908927974507862,
+        "per_class": {
+          "tomato_healthy": {
+            "precision": 0.9795081967213115,
+            "recall": 1.0,
+            "f1": 0.989648033126294,
+            "support": 239
+          },
+          "tomato_early_blight": {
+            "precision": 0.9798657718120806,
+            "recall": 0.9733333333333334,
+            "f1": 0.9765886287625418,
+            "support": 150
+          },
+          "tomato_late_blight": {
+            "precision": 0.9859649122807017,
+            "recall": 0.9825174825174825,
+            "f1": 0.9842381786339754,
+            "support": 286
+          },
+          "potato_healthy": {
+            "precision": 0.9583333333333334,
+            "recall": 1.0,
+            "f1": 0.9787234042553191,
+            "support": 23
+          },
+          "potato_early_blight": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 150
+          },
+          "potato_late_blight": {
+            "precision": 0.9931506849315068,
+            "recall": 0.9666666666666667,
+            "f1": 0.9797297297297297,
+            "support": 150
+          },
+          "maize_healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 174
+          },
+          "maize_common_rust": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 179
+          },
+          "grape_healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 63
+          },
+          "grape_black_rot": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 177
+          }
+        },
+        "classification_report": {
+          "tomato_healthy": {
+            "precision": 0.9795081967213115,
+            "recall": 1.0,
+            "f1-score": 0.989648033126294,
+            "support": 239.0
+          },
+          "tomato_early_blight": {
+            "precision": 0.9798657718120806,
+            "recall": 0.9733333333333334,
+            "f1-score": 0.9765886287625418,
+            "support": 150.0
+          },
+          "tomato_late_blight": {
+            "precision": 0.9859649122807017,
+            "recall": 0.9825174825174825,
+            "f1-score": 0.9842381786339754,
+            "support": 286.0
+          },
+          "potato_healthy": {
+            "precision": 0.9583333333333334,
+            "recall": 1.0,
+            "f1-score": 0.9787234042553191,
+            "support": 23.0
+          },
+          "potato_early_blight": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 150.0
+          },
+          "potato_late_blight": {
+            "precision": 0.9931506849315068,
+            "recall": 0.9666666666666667,
+            "f1-score": 0.9797297297297297,
+            "support": 150.0
+          },
+          "maize_healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 174.0
+          },
+          "maize_common_rust": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 179.0
+          },
+          "grape_healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 63.0
+          },
+          "grape_black_rot": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 177.0
+          },
+          "accuracy": 0.9912005028284098,
+          "macro avg": {
+            "precision": 0.9896822899078934,
+            "recall": 0.9922517482517483,
+            "f1-score": 0.9908927974507862,
+            "support": 1591.0
+          },
+          "weighted avg": {
+            "precision": 0.9912523941589433,
+            "recall": 0.9912005028284098,
+            "f1-score": 0.9911856637826615,
+            "support": 1591.0
+          }
+        },
+        "cpu_or_device_latency_ms": {
+          "p50": 40.848565625310584,
+          "p95": 45.91749062456074
+        }
+      }
+    }
+  ]
+}

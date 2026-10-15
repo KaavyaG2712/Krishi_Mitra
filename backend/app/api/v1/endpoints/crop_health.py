@@ -4,11 +4,12 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
+from starlette.concurrency import run_in_threadpool
 
 from app.core.config import get_settings
 from app.db.database import get_db
 from app.db.models import DiseaseScan
-from app.modules.crop_health.service import DISPLAY_LABELS, InvalidLeafImage, predict
+from app.modules.crop_health.service import DISPLAY_LABELS, MAX_IMAGE_BYTES, InvalidLeafImage, predict
 
 router = APIRouter(prefix="/health")
 SUPPORTED_CROPS = {"tomato", "potato", "maize", "grape"}
@@ -40,7 +41,7 @@ class HealthPredictionResponse(BaseModel):
 async def predict_leaf(
     image: UploadFile = File(...),
     crop_hint: str | None = Form(default=None),
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db, scope="function"),
 ) -> HealthPredictionResponse:
     if image.content_type not in {"image/jpeg", "image/png", "image/webp"}:
         raise HTTPException(status_code=415, detail="Upload a PNG, JPEG, or WebP leaf image.")
@@ -48,11 +49,13 @@ async def predict_leaf(
         raise HTTPException(status_code=422, detail="Crop hint must be Tomato, Potato, Maize, or Grape.")
     settings = get_settings()
     try:
-        image_contents = await image.read()
-        label, confidence = predict(image_contents, settings.model_artifact_dir)
+        image_contents = await image.read(MAX_IMAGE_BYTES + 1)
+        if len(image_contents) > MAX_IMAGE_BYTES:
+            raise HTTPException(413, "Upload an image under 10 MB.")
+        label, confidence = await run_in_threadpool(predict, image_contents, settings.model_artifact_dir)
     except InvalidLeafImage as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
-    except FileNotFoundError as error:
+    except (FileNotFoundError, ImportError) as error:
         raise HTTPException(status_code=503, detail="The crop-health model is unavailable.") from error
     detected_crop = label.split("_", maxsplit=1)[0]
     selected_crop = crop_hint.lower() if crop_hint else None

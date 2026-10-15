@@ -9,21 +9,26 @@ description = "Local API for KrishiMitra Review 3"
 requires-python = ">=3.12,<3.13"
 dependencies = [
   "alembic>=1.14,<2",
-  "fastapi>=0.115,<1",
+  "fastapi>=0.121,<1",
   "google-genai>=1.0,<2",
+  "httpx>=0.28,<1",
   "pgvector>=0.3,<1",
-  "pillow>=11,<12",
+  "pillow>=12.3,<13",
   "psycopg[binary]>=3.2,<4",
   "pydantic-settings>=2.6,<3",
   "python-multipart>=0.0.20,<1",
+  "rasterio>=1.4.3,<1.5",
   "sqlalchemy>=2.0,<3",
   "uvicorn[standard]>=0.32,<1",
 ]
 
 [project.optional-dependencies]
+soil-ml = [
+  "scikit-learn>=1.6,<2",
+]
 dev = [
   "httpx>=0.28,<1",
-  "pytest>=8.3,<9",
+  "pytest>=9.0.3,<10",
 ]
 ml = [
   "scikit-learn>=1.6,<2",
@@ -37,3 +42,6 @@ testpaths = ["tests"]
 
 [tool.setuptools.packages.find]
 include = ["app*"]
+
+[tool.setuptools.package-data]
+"app.modules.planning" = ["data/*.json", "data/*.geojson"]

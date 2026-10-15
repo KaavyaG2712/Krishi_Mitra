@@ -1,0 +1,36 @@
+KRISHIMITRA - WINDOWS QUICK START
+
+This folder contains all three modules:
+1. Crop Health leaf image analysis
+2. Soil & Crop Planning with location, area soil/weather and crop comparisons
+3. AI Agronomy Chatbot with translation and voice features
+
+FIRST RUN
+1. Install/start Docker Desktop, Python 3.12, and Node.js LTS.
+2. Open backend\.env and set GEMINI_API_KEY to your own Google AI Studio key.
+   Keep that key private. It is not included in this project copy.
+3. Double-click Start-KrishiMitra.cmd. On the first run it installs missing
+   Python/Node dependencies, starts PostgreSQL, applies migrations and starts
+   both app servers. The browser opens when ready. The first setup can take a
+   while because the CPU image-model runtime is large.
+
+NEXT RUNS
+Double-click Start-KrishiMitra.cmd. It reuses installed dependencies and the
+database volume.
+
+STOP
+Double-click Stop-KrishiMitra.cmd. It stops this project's frontend/backend
+and PostgreSQL container. Database contents are preserved. From PowerShell,
+use Stop-KrishiMitra.cmd -KeepDatabase to leave PostgreSQL running.
+
+URLS
+Website: http://127.0.0.1:5173
+API documentation: http://127.0.0.1:8000/docs (8001 if 8000 is occupied)
+Logs: .codex-finalizer\logs
+
+The app needs internet access for live weather and Gemini features. Local
+English/Hindi answer playback does not need a Gemini speech request. Soil
+planning uses the included area-level benchmark dataset when official soil
+health-card access is unavailable. Crop Health supports the model's four
+crops and ten trained labels only. Recommendations are decision support and
+should be checked against local agricultural guidance.

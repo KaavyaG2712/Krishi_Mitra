@@ -2,45 +2,64 @@
 .env
 .env.*
 !.env.example
+**/.env
+**/.env.*
+!**/.env.example
 
-# Python
-__pycache__/
-*.py[cod]
-.pytest_cache/
-.coverage
-htmlcov/
+# Python environments, caches, and build output
 .venv/
 venv/
+__pycache__/
+*.py[cod]
 *.egg-info/
-
-# JavaScript
-node_modules/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
 dist/
-.vite/
 
-# Local data, model artefacts, and logs
-data/raw/
-data/external_test/
-data/processed/
-models/checkpoints/
-models/releases/
-logs/
-*.log
+# JavaScript dependencies and generated frontend output
+node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/public/ocr/
 
-# Database storage
+# Local datasets and generated training manifests (regenerate with data scripts)
+/data/raw/
+/data/processed/
+/data/external_test/
+/data/splits/*.csv
+/data/splits/*.summary.json
+
+# Model training outputs; keep only the released Module 1 inference artifact
+/models/checkpoints/*
+!/models/checkpoints/mobilenetv2-10class-v1/
+/models/checkpoints/mobilenetv2-10class-v1/*
+!/models/checkpoints/mobilenetv2-10class-v1/best_model.pt
+!/models/checkpoints/mobilenetv2-10class-v1/metrics.json
+!/models/checkpoints/mobilenetv2-10class-v1/preprocessing.json
+/models/releases/
+
+# Local databases, logs, temporary files, and editor settings
 postgres_data/
-
-# Editors and operating systems
+*.log
+*.tmp
+.codex-finalizer/
+.codex-doc-build/
+.codex-ppt-build/
 .vscode/
 .idea/
 .DS_Store
 Thumbs.db
 
-# Local artifact generation and verification workspaces
-.codex-doc-build/
-.codex-finalizer/
-.codex-ppt-build/
+# Drafts, duplicated handoffs, and conversation exports are not project sources
+/capstone -idea1-agr.docx
+/KrishiMitra_capstone_conversation.md
+/edited_IMPLEMENTATION_HANDOFF.md
+/IMPLEMENTATION_HANDOFF.md
 
-# Downloaded installers and archives
-python-*.exe
-Python-*.tar.xz
+# Keep only the final walkthrough deck
+/presentations/*
+!/presentations/KrishiMitra_Technical_Walkthrough_v2.pptx

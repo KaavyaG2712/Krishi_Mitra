@@ -1,0 +1,373 @@
+{
+  "version": "2026-10-08",
+  "yield_period": "2020-21 to 2024-25",
+  "yield_source": "https://nccd.gov.in/uploads/Agricultural_Statisitcs_at_a_Glance_2024_25_11da3cd37d.pdf#page=70",
+  "yield_table": "2.1 (national normal estimates, kg/ha)",
+  "crops": [
+    {
+      "id": "wheat",
+      "name": "Wheat",
+      "requirements": {
+        "temperature": {
+          "optimal_min": 15.0,
+          "optimal_max": 23.0,
+          "min": 5.0,
+          "max": 27.0
+        },
+        "annual_rain": {
+          "optimal_min": 750.0,
+          "optimal_max": 900.0,
+          "min": 300.0,
+          "max": 1600.0
+        },
+        "ph": {
+          "optimal_min": 6.0,
+          "optimal_max": 7.0,
+          "min": 5.5,
+          "max": 8.5
+        }
+      },
+      "yields_kg_ha": {
+        "rabi": 3547
+      },
+      "sowing_months": [
+        10,
+        11,
+        12
+      ],
+      "price_inr_quintal": 2610,
+      "cost_inr_quintal": 1264,
+      "marketing_season": "2027-28",
+      "price_kind": "MSP benchmark",
+      "cost_basis": "All-India A2+FL production cost benchmark",
+      "requirements_source": "https://ecocrop.apps.fao.org/ecocrop/srv/en/dataSheet?id=2114",
+      "economics_source": "https://www.pib.gov.in/newsite/erelcontent.aspx?lang=2&reg=3&relid=295517"
+    },
+    {
+      "id": "gram",
+      "name": "Chickpea (gram)",
+      "requirements": {
+        "temperature": {
+          "optimal_min": 15.0,
+          "optimal_max": 29.0,
+          "min": 7.0,
+          "max": 35.0
+        },
+        "annual_rain": {
+          "optimal_min": 600.0,
+          "optimal_max": 1000.0,
+          "min": 300.0,
+          "max": 1800.0
+        },
+        "ph": {
+          "optimal_min": 6.0,
+          "optimal_max": 8.5,
+          "min": 4.7,
+          "max": 9.5
+        }
+      },
+      "yields_kg_ha": {
+        "rabi": 1199
+      },
+      "sowing_months": [
+        10,
+        11,
+        12
+      ],
+      "price_inr_quintal": 5958,
+      "cost_inr_quintal": 3751,
+      "marketing_season": "2027-28",
+      "price_kind": "MSP benchmark",
+      "cost_basis": "All-India A2+FL production cost benchmark",
+      "requirements_source": "https://ecocrop.apps.fao.org/ecocrop/srv/en/dataSheet?id=2479",
+      "economics_source": "https://www.pib.gov.in/newsite/erelcontent.aspx?lang=2&reg=3&relid=295517"
+    },
+    {
+      "id": "mustard",
+      "name": "Rapeseed / mustard",
+      "requirements": {
+        "temperature": {
+          "optimal_min": 15.0,
+          "optimal_max": 28.0,
+          "min": 7.0,
+          "max": 40.0
+        },
+        "annual_rain": {
+          "optimal_min": 700.0,
+          "optimal_max": 2400.0,
+          "min": 500.0,
+          "max": 4200.0
+        },
+        "ph": {
+          "optimal_min": 5.5,
+          "optimal_max": 6.5,
+          "min": 5.0,
+          "max": 8.0
+        }
+      },
+      "yields_kg_ha": {
+        "rabi": 1468
+      },
+      "sowing_months": [
+        9,
+        10,
+        11
+      ],
+      "price_inr_quintal": 6613,
+      "cost_inr_quintal": 3367,
+      "marketing_season": "2027-28",
+      "price_kind": "MSP benchmark",
+      "cost_basis": "All-India A2+FL production cost benchmark",
+      "requirements_source": "https://ecocrop.apps.fao.org/ecocrop/srv/en/dataSheet?id=548",
+      "economics_source": "https://www.pib.gov.in/newsite/erelcontent.aspx?lang=2&reg=3&relid=295517"
+    },
+    {
+      "id": "maize",
+      "name": "Maize",
+      "requirements": {
+        "temperature": {
+          "optimal_min": 18.0,
+          "optimal_max": 33.0,
+          "min": 10.0,
+          "max": 47.0
+        },
+        "annual_rain": {
+          "optimal_min": 600.0,
+          "optimal_max": 1200.0,
+          "min": 400.0,
+          "max": 1800.0
+        },
+        "ph": {
+          "optimal_min": 5.0,
+          "optimal_max": 7.0,
+          "min": 4.5,
+          "max": 8.5
+        }
+      },
+      "yields_kg_ha": {
+        "kharif": 2847,
+        "rabi": 5206,
+        "summer": 4743
+      },
+      "sowing_months": [
+        1,
+        2,
+        6,
+        7,
+        10,
+        11
+      ],
+      "price_inr_quintal": 2410,
+      "cost_inr_quintal": 1544,
+      "marketing_season": "2026-27",
+      "price_kind": "MSP benchmark",
+      "cost_basis": "All-India A2+FL production cost benchmark",
+      "requirements_source": "https://ecocrop.apps.fao.org/ecocrop/srv/en/dataSheet?id=2175",
+      "economics_source": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2260617"
+    },
+    {
+      "id": "jowar",
+      "name": "Sorghum (jowar)",
+      "requirements": {
+        "temperature": {
+          "optimal_min": 22.0,
+          "optimal_max": 35.0,
+          "min": 8.0,
+          "max": 40.0
+        },
+        "annual_rain": {
+          "optimal_min": 400.0,
+          "optimal_max": 600.0,
+          "min": 300.0,
+          "max": 700.0
+        },
+        "ph": {
+          "optimal_min": 5.5,
+          "optimal_max": 7.5,
+          "min": 5.0,
+          "max": 8.0
+        }
+      },
+      "yields_kg_ha": {
+        "kharif": 1152,
+        "rabi": 1129
+      },
+      "sowing_months": [
+        6,
+        7,
+        9,
+        10
+      ],
+      "price_inr_quintal": 4023,
+      "cost_inr_quintal": 2682,
+      "marketing_season": "2026-27",
+      "price_kind": "MSP benchmark",
+      "cost_basis": "All-India A2+FL production cost benchmark",
+      "requirements_source": "https://ecocrop.apps.fao.org/ecocrop/srv/en/dataSheet?id=48747",
+      "economics_source": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2260617"
+    },
+    {
+      "id": "bajra",
+      "name": "Pearl millet (bajra)",
+      "requirements": {
+        "temperature": {
+          "optimal_min": 25.0,
+          "optimal_max": 35.0,
+          "min": 12.0,
+          "max": 40.0
+        },
+        "annual_rain": {
+          "optimal_min": 400.0,
+          "optimal_max": 900.0,
+          "min": 200.0,
+          "max": 1700.0
+        },
+        "ph": {
+          "optimal_min": 5.0,
+          "optimal_max": 6.5,
+          "min": 4.5,
+          "max": 8.3
+        }
+      },
+      "yields_kg_ha": {
+        "kharif": 1427,
+        "summer": 2526
+      },
+      "sowing_months": [
+        2,
+        3,
+        6,
+        7
+      ],
+      "price_inr_quintal": 2900,
+      "cost_inr_quintal": 1858,
+      "marketing_season": "2026-27",
+      "price_kind": "MSP benchmark",
+      "cost_basis": "All-India A2+FL production cost benchmark",
+      "requirements_source": "https://ecocrop.apps.fao.org/ecocrop/srv/en/dataSheet?id=8418",
+      "economics_source": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2260617"
+    },
+    {
+      "id": "groundnut",
+      "name": "Groundnut",
+      "requirements": {
+        "temperature": {
+          "optimal_min": 22.0,
+          "optimal_max": 32.0,
+          "min": 10.0,
+          "max": 45.0
+        },
+        "annual_rain": {
+          "optimal_min": 600.0,
+          "optimal_max": 1500.0,
+          "min": 400.0,
+          "max": 4000.0
+        },
+        "ph": {
+          "optimal_min": 5.5,
+          "optimal_max": 6.5,
+          "min": 4.5,
+          "max": 8.5
+        }
+      },
+      "yields_kg_ha": {
+        "annual": 1945
+      },
+      "sowing_months": [
+        1,
+        2,
+        6,
+        7,
+        10,
+        11
+      ],
+      "price_inr_quintal": 7517,
+      "cost_inr_quintal": 5011,
+      "marketing_season": "2026-27",
+      "price_kind": "MSP benchmark",
+      "cost_basis": "All-India A2+FL production cost benchmark",
+      "requirements_source": "https://ecocrop.apps.fao.org/ecocrop/srv/en/dataSheet?id=2199",
+      "economics_source": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2260617"
+    },
+    {
+      "id": "soybean",
+      "name": "Soybean",
+      "requirements": {
+        "temperature": {
+          "optimal_min": 20.0,
+          "optimal_max": 33.0,
+          "min": 10.0,
+          "max": 38.0
+        },
+        "annual_rain": {
+          "optimal_min": 600.0,
+          "optimal_max": 1500.0,
+          "min": 450.0,
+          "max": 1800.0
+        },
+        "ph": {
+          "optimal_min": 5.5,
+          "optimal_max": 6.5,
+          "min": 4.5,
+          "max": 8.4
+        }
+      },
+      "yields_kg_ha": {
+        "annual": 1071
+      },
+      "sowing_months": [
+        6,
+        7
+      ],
+      "price_inr_quintal": 5708,
+      "cost_inr_quintal": 3805,
+      "marketing_season": "2026-27",
+      "price_kind": "MSP benchmark",
+      "cost_basis": "All-India A2+FL production cost benchmark",
+      "requirements_source": "https://ecocrop.apps.fao.org/ecocrop/srv/en/dataSheet?id=1150",
+      "economics_source": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2260617"
+    },
+    {
+      "id": "sunflower",
+      "name": "Sunflower",
+      "requirements": {
+        "temperature": {
+          "optimal_min": 17.0,
+          "optimal_max": 34.0,
+          "min": 5.0,
+          "max": 45.0
+        },
+        "annual_rain": {
+          "optimal_min": 600.0,
+          "optimal_max": 1000.0,
+          "min": 300.0,
+          "max": 1600.0
+        },
+        "ph": {
+          "optimal_min": 6.0,
+          "optimal_max": 7.5,
+          "min": 5.5,
+          "max": 8.0
+        }
+      },
+      "yields_kg_ha": {
+        "annual": 1042
+      },
+      "sowing_months": [
+        1,
+        2,
+        6,
+        7,
+        10,
+        11
+      ],
+      "price_inr_quintal": 8343,
+      "cost_inr_quintal": 5562,
+      "marketing_season": "2026-27",
+      "price_kind": "MSP benchmark",
+      "cost_basis": "All-India A2+FL production cost benchmark",
+      "requirements_source": "https://ecocrop.apps.fao.org/ecocrop/srv/en/dataSheet?id=1191",
+      "economics_source": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2260617"
+    }
+  ]
+}
