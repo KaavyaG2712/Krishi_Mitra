@@ -26,6 +26,15 @@ dependencies = [
 soil-ml = [
   "scikit-learn>=1.6,<2",
 ]
+crop-benchmark = [
+  "numpy>=2,<3",
+  "pandas>=2.2,<4",
+  "scikit-learn>=1.6,<2",
+  "xgboost>=2.1,<4",
+]
+corpus = [
+  "pypdf>=5.1,<7",
+]
 dev = [
   "httpx>=0.28,<1",
   "pytest>=9.0.3,<10",
@@ -45,3 +54,4 @@ include = ["app*"]
 
 [tool.setuptools.package-data]
 "app.modules.planning" = ["data/*.json", "data/*.geojson"]
+"app.modules.advisor" = ["data/*.json"]

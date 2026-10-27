@@ -1,0 +1,65 @@
+{
+  "task": "district-level crop yield regression (not farm-level profit or a direct recommendation)",
+  "dataset": "data\\raw\\crop-yield-benchmark\\crop_yield.csv",
+  "features": [
+    "state",
+    "district",
+    "year",
+    "crop"
+  ],
+  "target": "yield, kg/ha",
+  "split": {
+    "type": "latest-years chronological holdout",
+    "train_years": [
+      1966,
+      2012
+    ],
+    "test_years": [
+      2013,
+      2014,
+      2015,
+      2016,
+      2017
+    ],
+    "train_rows": 89651,
+    "test_rows": 10011,
+    "districts_in_both": 304
+  },
+  "same_test_rows_for_all_models": true,
+  "models": [
+    {
+      "model": "mean_baseline",
+      "mae_kg_ha": 770.3075354167336,
+      "rmse_kg_ha": 1252.2561421650146,
+      "r2": -0.2074912111657694,
+      "test_rows": 10011,
+      "fit_seconds": 0.13,
+      "predict_seconds": 0.01
+    },
+    {
+      "model": "random_forest",
+      "mae_kg_ha": 676.8885663299214,
+      "rmse_kg_ha": 1071.5026804072659,
+      "r2": 0.11593507402018077,
+      "test_rows": 10011,
+      "fit_seconds": 35.037,
+      "predict_seconds": 0.061
+    },
+    {
+      "model": "xgboost",
+      "mae_kg_ha": 683.0988884141507,
+      "rmse_kg_ha": 1080.9659943340644,
+      "r2": 0.1002503195606761,
+      "test_rows": 10011,
+      "fit_seconds": 0.404,
+      "predict_seconds": 0.02
+    }
+  ],
+  "limitations": [
+    "Predictive yield evaluation does not evaluate crop choice utility or profit.",
+    "Districts overlap train and test; this is not a new-district generalization test.",
+    "Soil nutrients and weather are not joined as matched historical features.",
+    "A crop's realized yield is not the same as its profitability or suitability.",
+    "Model hyperparameters are fixed and not tuned."
+  ]
+}

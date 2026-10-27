@@ -1,0 +1,12 @@
+{
+  "source_page": "https://tci.cornell.edu/data/",
+  "portal_page": "http://data.icrisat.org/dld/src/crops.html",
+  "api_url": "http://data.icrisat.org/dldAPI/apportioned/area-production-yield",
+  "downloaded_at_utc": "2026-10-16T10:34:48.971992+00:00",
+  "raw_file": "crop_yield_source.json",
+  "raw_sha256": "89fcd993e734c7f6c7499192e5ab51b9e9dea20e7133bf3d5a19a7f70b82afbd",
+  "file": "crop_yield.csv",
+  "sha256": "b23d3c66951056535b3c0ba44f5bf84d7a4832dc49ee6c93fc94982850d7cfb5",
+  "rows": 366663,
+  "note": "Raw response retained. Normalized yield-column labels were parsed from DLD headers; verify all units and crop names before evaluation."
+}

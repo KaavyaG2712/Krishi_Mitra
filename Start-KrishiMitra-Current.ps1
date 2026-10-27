@@ -181,7 +181,7 @@ try {
     if ($null -eq $npm) { throw "Node.js LTS is required but the npm command was not found." }
 
     if (-not (Test-Path -LiteralPath $backendPython)) {
-        if (-not $InstallMissing) { throw "Backend environment is missing. Run Start-KrishiMitra-Current.cmd -InstallMissing once." }
+        if (-not $InstallMissing) { throw "Backend environment is missing. Run Start-KrishiMitra.cmd to install missing packages." }
         $py = Get-Command py -ErrorAction SilentlyContinue
         if ($null -eq $py) { throw "Python Launcher (py) was not found." }
         Write-Status "Creating the backend virtual environment."
@@ -192,7 +192,7 @@ try {
     if (-not (Test-Path -LiteralPath $backendPython)) { throw "Backend Python was not created at $backendPython." }
 
     if (-not (Test-Path -LiteralPath $frontendVite)) {
-        if (-not $InstallMissing) { throw "Frontend packages are missing. Run Start-KrishiMitra-Current.cmd -InstallMissing once." }
+        if (-not $InstallMissing) { throw "Frontend packages are missing. Run Start-KrishiMitra.cmd to install missing packages." }
         Write-Status "Installing frontend packages from package-lock.json."
         Push-Location $frontendDirectory
         try { & $npm.Source ci }
@@ -202,7 +202,7 @@ try {
 
     if (-not (Test-Path -LiteralPath $backendEnvironment)) {
         Copy-Item -LiteralPath $backendEnvironmentExample -Destination $backendEnvironment
-        Write-Status "Created backend/.env from backend/.env.example. Add GEMINI_API_KEY there for chat and server speech."
+        Write-Status "Created backend/.env from backend/.env.example. Local chat needs no API key; Gemini is optional for translation and server speech."
     }
 
     Ensure-CropHealthRuntime -RepositoryRoot $repositoryRoot -BackendDirectory $backendDirectory `
@@ -245,9 +245,23 @@ try {
         # run at every startup and also upgrades databases after code updates.
         Write-Status "Applying database migrations to the latest version."
         Push-Location $backendDirectory
-        try { & $backendPython -m alembic upgrade head }
+        try {
+            $savedErrorPreference = $ErrorActionPreference
+            try {
+                $ErrorActionPreference = "Continue"
+                & $backendPython -m alembic upgrade head
+                $migrationExitCode = $LASTEXITCODE
+                if ($migrationExitCode -eq 0) {
+                    Write-Status "Loading the local agronomy knowledge library."
+                    & $backendPython -m app.modules.advisor.seed_knowledge
+                    $seedExitCode = $LASTEXITCODE
+                }
+            }
+            finally { $ErrorActionPreference = $savedErrorPreference }
+        }
         finally { Pop-Location }
-        if ($LASTEXITCODE -ne 0) { throw "Database migrations failed." }
+        if ($migrationExitCode -ne 0) { throw "Database migrations failed." }
+        if ($seedExitCode -ne 0) { throw "The local agronomy knowledge library could not be loaded." }
     }
     finally { Pop-Location }
 
@@ -269,7 +283,7 @@ try {
     Write-Host "KrishiMitra current checkout is ready:" -ForegroundColor Green
     Write-Host "  Website: http://127.0.0.1:$FrontendPort"
     Write-Host "  API docs: http://127.0.0.1:$BackendPort/docs"
-    Write-Host "  Modules: Crop Health, Soil & Crop Planning, AI Agronomy Chatbot"
+    Write-Host "  Modules: Crop Health, Soil & Crop Planning, Local Agronomy Knowledge Chat"
     Write-Host "  Logs: $logDirectory"
     Start-Process "http://127.0.0.1:$FrontendPort/"
 }

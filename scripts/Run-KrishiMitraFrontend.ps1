@@ -16,7 +16,7 @@ try {
 
     $viteExecutable = Join-Path $frontendDirectory "node_modules\.bin\vite.cmd"
     if (-not (Test-Path -LiteralPath $viteExecutable)) {
-        throw "Frontend packages are missing. Run scripts/Start-KrishiMitra.ps1 -InstallMissing first."
+        throw "Frontend packages are missing. Run Start-KrishiMitra.cmd first to install missing packages."
     }
 
     Set-Location $frontendDirectory

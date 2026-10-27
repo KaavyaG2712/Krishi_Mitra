@@ -2,7 +2,7 @@
 
 Date: 26 September 2026. Implemented in the existing repository; the existing product spelling, stack, crop-health behavior, database schema and migrations are preserved.
 
-**27 September follow-up:** [speech failure fix and local report import](speech-and-report-import.md) supersedes the browser-only STT architecture and adds photo/PDF import plus reusable named reports without a government API key. The earlier sections below describe the initial implementation; consult the follow-up and current setup guide for the updated flow.
+**27 September follow-up:** [speech failure fix and local report import](speech-and-report-import.md) supersedes the browser-only STT architecture and adds photo/PDF import plus reusable named reports without a government API key. The current text advisor also uses local PostgreSQL full-text search with Python rules, reviewed source passages and citations; see [local advisor](local-advisor.md). The repository-analysis table below records the pre-change baseline.
 
 ## 1. Repository analysis
 
@@ -10,9 +10,9 @@ Date: 26 September 2026. Implemented in the existing repository; the existing pr
 | --- | --- |
 | Frontend | React 18, TypeScript, Vite 6, Tailwind and TanStack Query. One `App.tsx` contained navigation, image upload and chatbot. No router library, authentication UI, frontend tests, service worker or dedicated soil screen. |
 | Backend | FastAPI/Pydantic, synchronous SQLAlchemy sessions and psycopg; versioned `/api/v1` routers. Leaf inference was invoked synchronously inside an async endpoint. External Gemini calls and frontend calls lacked explicit timeouts. |
-| Database | PostgreSQL 16 + pgvector; Alembic creates model registry, disease scans, knowledge documents/chunks and advisor conversations/messages/citations. No soil history/account/ownership tables. The knowledge schema is present but retrieval is not wired into the chatbot. |
+| Database | PostgreSQL 16 + pgvector; Alembic creates model registry, disease scans, knowledge documents/chunks and advisor conversations/messages/citations. No soil history/account/ownership tables. Local agronomy retrieval now uses a generated `tsvector` column and GIN index. |
 | Existing ML | MobileNetV2 on a 10-label PlantVillage subset, with training/preprocessing/split scripts and stored metadata. The checkpoint and raw dataset are Git-ignored and absent from this worktree. No tabular soil or crop-suitability dataset/model exists. |
-| Existing chatbot | Backend Gemini call, eight recent canonical messages as context, PostgreSQL storage. A conversation UUID could be supplied without proof of ownership. No speech or translation layers. |
+| Existing chatbot baseline | The original implementation used Gemini generation and recent conversation history. The current implementation searches reviewed PostgreSQL passages, stores citations and uses signed conversation capabilities. |
 | Module 2 before changes | Absent from routes, UI and services. There was no existing crop recommendation engine to connect or preserve. |
 | Configuration | Backend `.env`, public frontend API URL, exact development CORS origins, Windows launch scripts and a database-only Compose service. No committed production token was needed or added. |
 
@@ -40,11 +40,12 @@ flowchart TD
     Text --> Voice[User-controlled browser TTS]
     Speech[Selected-language browser STT] --> Edit[Editable original transcript]
     Edit --> English[Backend English translation]
-    English --> Chat[Existing general Gemini chatbot]
-    Chat --> Translation
+    English --> Chat[Python rules + PostgreSQL full-text search]
+    Chat --> Citation[Stored passages + source citations]
+    Citation --> Text
 ```
 
-There is one backend recommendation/guidance module. It returns missing-parameter information, practical next steps and limitations; it does not invent suitability scores, nutrient classes or fertilizer doses. Soil explanation is deterministic from the signed values and those steps, rather than asking an LLM to create measurements. General farming questions still use the existing Gemini advisor. The user can leave soil explanation mode for general chat.
+There is one backend recommendation/guidance module. It returns missing-parameter information, practical next steps and limitations; it does not invent suitability scores, nutrient classes or fertilizer doses. Soil explanation is deterministic from the signed values and those steps. General farming questions return stored, cited passages from the local knowledge library; the advisor does not call a generative model. The user can leave soil explanation mode for general chat.
 
 Manual and government profiles use the same typed structure. `GOVERNMENT_VERIFIED`, `USER_ENTERED` and `AI_ESTIMATED` are distinct classifications and badges. The estimate badge/mandatory warning are supported, but no untrained estimate path is advertised. Test fixtures are clearly synthetic and never substituted for missing government data.
 

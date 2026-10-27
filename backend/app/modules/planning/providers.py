@@ -11,7 +11,7 @@ from concurrent.futures import Future, ThreadPoolExecutor
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from threading import RLock
-from time import monotonic
+from time import monotonic, sleep
 
 import httpx
 from app.modules.planning.dates import today_in_india
@@ -23,6 +23,8 @@ SOIL_LAYERS = {
     "organic_carbon": ("organic.carbon_usda.6a1c", 0.5, "%", 100),
     "sand": ("sand.wfraction_usda.3a1a1a", 1, "%", 100),
 }
+_NOMINATIM_LOCK = RLock()
+_NOMINATIM_LAST_REQUEST = 0.0
 
 
 class DataUnavailable(Exception):
@@ -76,13 +78,18 @@ class PlanningData:
         self.soil_cache = Cache()
 
     def json(self, url, params):
-        for attempt in range(2):
+        max_attempts = 3
+        for attempt in range(max_attempts):
             try:
                 return self._json(url, params)
             except httpx.HTTPError as error:
                 transient = isinstance(error, httpx.RequestError) or (
-                    isinstance(error, httpx.HTTPStatusError) and error.response.status_code in {502, 503, 504})
-                if attempt == 0 and transient:
+                    isinstance(error, httpx.HTTPStatusError) and error.response.status_code in {500, 502, 503, 504})
+                if transient and attempt + 1 < max_attempts:
+                    # Short backoff lets a transient upstream restart or network
+                    # blip recover without holding the recommendation request
+                    # for the much longer SDK default retry intervals.
+                    sleep(0.35 * (attempt + 1))
                     continue
                 raise DataUnavailable("The data service could not be reached. Please retry.") from None
 
@@ -115,9 +122,39 @@ class PlanningData:
                     continue
                 lat, lon = number(r.get("latitude"), -90, 90), number(r.get("longitude"), -180, 180)
                 result.append({"latitude": lat, "longitude": lon,
-                               "name": ", ".join(str(r[k])[:80] for k in ["name", "admin2", "admin1"] if r.get(k))[:180]})
+                               "name": ", ".join(str(r[k])[:80] for k in ["name", "admin2", "admin1"] if r.get(k))[:180],
+                               "district": str(r.get("admin2") or "")[:100] or None,
+                               "state": str(r.get("admin1") or "")[:100] or None})
             return result
         return self.cache.get(("places", name.casefold()), 86400, fetch)
+
+    def administrative_area(self, lat, lon):
+        """Resolve the district/state needed to match a GPS point to the DLD table."""
+        def fetch():
+            global _NOMINATIM_LAST_REQUEST
+            try:
+                with _NOMINATIM_LOCK:
+                    wait = 1.1 - (monotonic() - _NOMINATIM_LAST_REQUEST)
+                    if wait > 0:
+                        sleep(wait)
+                    _NOMINATIM_LAST_REQUEST = monotonic()
+                    with httpx.Client(timeout=httpx.Timeout(12, connect=5),
+                                       headers={"User-Agent": "KrishiMitra crop-yield research demo"},
+                                       transport=self.transport) as client:
+                        response = client.get("https://nominatim.openstreetmap.org/reverse", params={
+                            "lat": lat, "lon": lon, "format": "jsonv2", "zoom": 10, "addressdetails": 1,
+                        })
+                        response.raise_for_status()
+                        payload = response.json()
+            except (httpx.HTTPError, ValueError):
+                raise DataUnavailable("Location could not be matched to a historical district. Search for the nearest town instead.") from None
+            address = payload.get("address", {}) if isinstance(payload, dict) else {}
+            district = address.get("state_district") or address.get("county") or address.get("district")
+            state = address.get("state")
+            if not isinstance(district, str) or not isinstance(state, str):
+                raise DataUnavailable("Location lookup did not return a district and state. Search for the nearest town instead.")
+            return {"district": district[:100], "state": state[:100]}
+        return self.cache.get(("admin-area", round(lat, 3), round(lon, 3)), 86400, fetch)
 
     def soil(self, lat, lon):
         # Cache actual raster cells rather than assigning one city's soil to a district.
@@ -137,7 +174,8 @@ class PlanningData:
             url = SOIL_URL + f"{layer}_m_250m_b10cm_19500101_20171231_go_epsg.4326_v0.2.tif"
             try:
                 with rasterio.Env(GDAL_DISABLE_READDIR_ON_OPEN="EMPTY_DIR", CPL_VSIL_CURL_ALLOWED_EXTENSIONS=".tif",
-                                  GDAL_HTTP_CONNECTTIMEOUT="5", GDAL_HTTP_TIMEOUT="20", GDAL_HTTP_MAX_RETRY="0",
+                                  GDAL_HTTP_CONNECTTIMEOUT="5", GDAL_HTTP_TIMEOUT="20", GDAL_HTTP_MAX_RETRY="1",
+                                  GDAL_HTTP_RETRY_DELAY="1",
                                   VSI_CACHE=True, VSI_CACHE_SIZE=5_000_000):
                     with rasterio.open(url) as src:
                         if src.crs.to_epsg() != 4326:

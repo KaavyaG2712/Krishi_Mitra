@@ -27,9 +27,14 @@ frontend/.vite/
 frontend/public/ocr/
 
 # Local datasets and generated training manifests (regenerate with data scripts)
-/data/raw/
+/data/raw/*
+!/data/raw/crop-yield-benchmark/
+/data/raw/crop-yield-benchmark/*
+!/data/raw/crop-yield-benchmark/crop_yield.csv
+!/data/raw/crop-yield-benchmark/source_metadata.json
 /data/processed/
 /data/external_test/
+/experiments/crop-yield-benchmark/results/
 /data/splits/*.csv
 /data/splits/*.summary.json
 
@@ -46,6 +51,8 @@ frontend/public/ocr/
 postgres_data/
 *.log
 *.tmp
+/tmp/
+/imagessssss/
 .codex-finalizer/
 .codex-doc-build/
 .codex-ppt-build/

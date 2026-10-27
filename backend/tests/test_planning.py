@@ -229,7 +229,7 @@ def test_boolean_coordinates_and_area_rejected():
         with pytest.raises(ValidationError): PlanRequest(**data)
 
 
-def test_provider_retries_transient_failure_once_but_not_quota_errors():
+def test_provider_retries_transient_failure_but_not_quota_errors():
     calls = []
     def recover(req):
         calls.append(req)
@@ -242,3 +242,12 @@ def test_provider_retries_transient_failure_once_but_not_quota_errors():
         return httpx.Response(429, json={})
     with pytest.raises(DataUnavailable): PlanningData(httpx.MockTransport(quota)).places("Warangal")
     assert len(calls) == 1
+
+
+def test_provider_recovers_after_two_transient_failures():
+    calls = []
+    def recover(req):
+        calls.append(req)
+        return httpx.Response(503 if len(calls) < 3 else 200, json={"results": []})
+    assert PlanningData(httpx.MockTransport(recover)).places("Delhi") == []
+    assert len(calls) == 3

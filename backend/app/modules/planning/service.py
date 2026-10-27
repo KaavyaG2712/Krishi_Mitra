@@ -54,7 +54,7 @@ def economics(crop, area, season):
             "source_url": crop["economics_source"]}
 
 
-def rank_crops(request, soil, climate, forecast):
+def rank_crops(request, soil, climate, forecast, candidate_limit=3):
     ph = soil.get("measurements", {}).get("ph", {}).get("value")
     if ph is None or climate.get("status") != "available":
         return [], [], "insufficient_data"
@@ -77,11 +77,11 @@ def rank_crops(request, soil, climate, forecast):
             if not req["ph"]["optimal_min"] <= ph <= req["ph"]["optimal_max"]:
                 cautions.append("Mapped pH is outside the FAO optimal range")
         if any(not req["temperature"]["min"] <= t <= req["temperature"]["max"] for t in temperatures):
-            failures.append("One or more of the next four monthly climate means fall outside the FAO temperature range")
+            cautions.append("Historical temperatures extend beyond the published broad crop range; verify local variety and season guidance")
         else:
-            reasons.append(f"Four-month historical mean temperature {mean_temp:.1f} °C; every monthly mean is inside the crop range")
+            reasons.append(f"Four-month historical mean temperature {mean_temp:.1f} °C; monthly means are within the broad published range")
         if not req["temperature"]["optimal_min"] <= mean_temp <= req["temperature"]["optimal_max"]:
-            failures.append("Four-month historical mean is outside the FAO optimal temperature range; broad survival tolerance alone is insufficient for this shortlist")
+            cautions.append("Four-month historical mean is outside the published optimal temperature range")
         dry = annual_rain < req["annual_rain"]["min"] or any(r < 30 for r in growing_rain)
         if annual_rain > req["annual_rain"]["max"]:
             cautions.append("Annual rainfall exceeds the FAO range; drainage and local seasonal conditions need review")
@@ -107,12 +107,12 @@ def rank_crops(request, soil, climate, forecast):
                          "economics": money, "requirements_source": crop["requirements_source"],
                          "status": "provisional", "sowing_months": crop["sowing_months"]})
     eligible.sort(key=lambda c: (-c["economics"]["surplus_inr_ha"], c["name"]))
-    for i, crop in enumerate(eligible[:3]):
+    for i, crop in enumerate(eligible):
         crop["rank"] = i+1
-    return eligible[:3], excluded, "provisional" if eligible else "no_match"
+    return (eligible if candidate_limit is None else eligible[:candidate_limit]), excluded, "provisional" if eligible else "no_match"
 
 
-def plan(request: PlanRequest, provider: PlanningData):
+def plan(request: PlanRequest, provider: PlanningData, candidate_limit=3):
     if not in_india(request.latitude, request.longitude):
         raise DataUnavailable("This crop catalogue covers mainland India. Choose a location within that coverage; island and border coverage is not yet supported.")
     def read(name):
@@ -122,7 +122,7 @@ def plan(request: PlanRequest, provider: PlanningData):
             return {"status": "unavailable", "message": str(error)}
     with ThreadPoolExecutor(max_workers=3) as pool:
         soil, forecast, climate = list(pool.map(read, ["soil", "forecast", "climate"]))
-    top, excluded, status = rank_crops(request, soil, climate, forecast)
+    top, excluded, status = rank_crops(request, soil, climate, forecast, candidate_limit)
     warnings = [
         "Ranks compare only the nine crops in this catalogue that pass the screening rules. They do not establish the most profitable crops in your village.",
         "Income figures are benchmark surplus over A2+FL costs, not full net profit. They exclude the full opportunity cost of owned land/capital and are not a farm-specific budget.",

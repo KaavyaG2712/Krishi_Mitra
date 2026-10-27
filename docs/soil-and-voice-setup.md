@@ -116,9 +116,9 @@ The service caches successful lookups, including empty results, for 15 minutes b
 | --- | --- |
 | STT | Microphone recording → bounded WAV → `/speech/transcribe` → Gemini; browser SpeechRecognition is an explicit fallback |
 | Translation | Backend `TranslationProvider` with existing Gemini SDK |
-| Canonical answer | Existing Gemini advisor for general questions; deterministic structured soil explanation for a signed soil profile |
+| Canonical answer | PostgreSQL full-text retrieval with reviewed passages for general questions; deterministic structured soil explanation for a signed soil profile |
 | TTS | Browser speech synthesis with a matching installed voice |
-| Locales | English `en-IN`, Hindi `hi-IN`, Tamil `ta-IN`, Telugu `te-IN` |
+| Locales | English `en-IN`, Hindi `hi-IN`, Tamil `ta-IN`, Telugu `te-IN`, Bengali `bn-IN`, Marathi `mr-IN`, Kannada `kn-IN` |
 
 The user controls recording, editing and submission. STT displays the original script; successful chat responses retain both original and English transcripts. Input translation failure stops generation and keeps the draft. Output translation failure keeps the English answer, marks its language correctly for playback, and allows translation-only retry. Numbers with units and recognized crop/technical terms are protected with placeholders; missing/changed placeholders or newly introduced digits cause translation rejection. This verifies preservation, **not** linguistic correctness. Native-speaker assessment is still needed.
 
@@ -130,7 +130,7 @@ The default recording route sends up to 30 seconds of audio to this backend and 
 
 The primary route is now **Scan or import your soil report**: choose a photo/PDF or paste results text, review detected values and units, and optionally save a named report on the device. No government or Gemini key is needed for this route. `npm ci` prepares same-origin Tesseract workers, WASM and English OCR data; `npm run dev` and `npm run build` also prepare them. Deploy the full `dist` directory, including `ocr/`. PDF.js reads text PDFs and renders scans for local OCR. See the [follow-up guide](speech-and-report-import.md) for formats, bounds, privacy and accuracy limitations.
 
-Core soil actions, parameter labels, form guidance, language navigation and voice controls are localized. Some secondary copy, backend error text and the existing crop-health screen remain English. A full native-language editorial pass is required before claiming complete UI localization.
+The language selector covers English, Hindi, Tamil, Telugu, Bengali, Marathi and Kannada. Visible page text is translated on demand with Gemini, with successful strings cached in the browser; voice recognition and answer playback use the selected locale. This is machine localization, so source passages, some provider errors and translations without a cache can remain in their original language if the Gemini API or network is unavailable. Native-speaker review remains appropriate before formal publication.
 
 ## Offline soil-model experiment
 

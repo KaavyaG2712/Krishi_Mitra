@@ -14,7 +14,6 @@ class Settings(BaseSettings):
     frontend_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
     gemini_api_key: str | None = None
     gemini_generation_model: str = "gemini-3.1-flash-lite"
-    gemini_embedding_model: str = "gemini-embedding-2"
     gemini_speech_model: str | None = None
     model_artifact_dir: Path = Path(__file__).resolve().parents[3] / "models" / "checkpoints" / "mobilenetv2-10class-v1"
     # Below this threshold, return the closest supported label as uncertain.

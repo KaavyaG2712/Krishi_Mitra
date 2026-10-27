@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useMemo, useState, lazy, Suspense } from "react";
-import { Language, LanguageContext, languageNames } from "./i18n";
+import { Language, LanguageContext, languageNames, locales } from "./i18n";
+import PageTranslator from "./components/PageTranslator";
 import { checkApi, readStored, storeLocal } from "./services/api";
 import type { SoilResult } from "./components/SoilHealth";
 const SoilHealth = lazy(() => import("./components/ModuleTwo"));
@@ -66,10 +67,13 @@ function StatusPill({ ready, label }: { ready: boolean; label: string }) {
 
 function App() {
   const [view, setView] = useState<View>("overview");
-  const [language, setLanguage] = useState<Language>(() => { const saved = readStored<string>("language", "en"); return Object.prototype.hasOwnProperty.call(languageNames, saved) ? saved as Language : "en"; });
   const [soil, setSoil] = useState<SoilResult | null>(null);
   const [explainSoil, setExplainSoil] = useState(false);
-  useEffect(() => { document.documentElement.lang = language; storeLocal("language", language); }, [language]);
+  const [language, setLanguage] = useState<Language>(() => {
+    const saved = readStored<Language>("language", "en");
+    return saved in languageNames ? saved : "en";
+  });
+  useEffect(() => { document.documentElement.lang = locales[language]; storeLocal("language", language); }, [language]);
   const { data: apiReady = false, isPending: checkingApi } = useQuery({
     queryKey: ["api-health"],
     queryFn: checkApi,
@@ -80,7 +84,7 @@ function App() {
   });
 
   return (
-    <LanguageContext.Provider value={language}><main className="min-h-screen bg-[radial-gradient(circle_at_top_right,_#e4f2dd_0,_transparent_30%),linear-gradient(180deg,_#fbfdf9_0%,_#f4f8f1_100%)]">
+    <LanguageContext.Provider value={language}><main id="application-root" className="min-h-screen bg-[radial-gradient(circle_at_top_right,_#e4f2dd_0,_transparent_30%),linear-gradient(180deg,_#fbfdf9_0%,_#f4f8f1_100%)]">
       <div className="mx-auto max-w-6xl px-5 pb-12 pt-6 sm:px-8">
         <header className="flex flex-col gap-5 border-b border-leaf-100 pb-6 md:flex-row md:items-center md:justify-between">
           <button className="flex items-center gap-3 text-left" onClick={() => setView("overview")}>
@@ -91,10 +95,8 @@ function App() {
             </span>
           </button>
           <div className="flex flex-wrap items-center gap-2">
+            <label className="flex items-center gap-2 text-sm font-semibold text-leaf-900" htmlFor="site-language"><span>Language</span><select id="site-language" className="rounded-xl border border-leaf-200 bg-white px-3 py-2" value={language} onChange={event => setLanguage(event.target.value as Language)}>{Object.entries(languageNames).map(([code, name]) => <option key={code} value={code}>{name}</option>)}</select></label>
             <StatusPill ready={apiReady} label={checkingApi ? "Checking connection…" : apiReady ? "Connected" : "Connection unavailable"} />
-            <label className="language-select">Language / भाषा
-              <select aria-label="Language" value={language} onChange={event => setLanguage(event.target.value as Language)}>{Object.entries(languageNames).map(([key, name]) => <option key={key} value={key}>{name}</option>)}</select>
-            </label>
           </div>
         </header>
 
@@ -106,7 +108,7 @@ function App() {
               aria-current={view === item ? "page" : undefined}
               onClick={() => setView(item)}
             >
-              {({ en: { overview: "Home", soil: "Check My Soil", health: "Crop Health", advisor: "Ask KrishiMitra" }, hi: { overview: "होम", soil: "मेरी मिट्टी जाँचें", health: "फसल स्वास्थ्य", advisor: "कृषिमित्र से पूछें" }, ta: { overview: "முகப்பு", soil: "என் மண்ணை அறிய", health: "பயிர் நலம்", advisor: "கிருஷிமித்ராவிடம் கேளுங்கள்" }, te: { overview: "హోమ్", soil: "నా నేలను తనిఖీ చేయండి", health: "పంట ఆరోగ్యం", advisor: "కృషిమిత్రను అడగండి" } })[language][item]}
+              {({ overview: "Home", soil: "Check My Soil", health: "Crop Health", advisor: "Ask KrishiMitra" })[item]}
             </button>
           ))}
         </nav>
@@ -118,6 +120,7 @@ function App() {
           {view === "advisor" && <Advisor soil={explainSoil ? soil : null} onClearSoil={() => setExplainSoil(false)} />}
         </Suspense>
       </div>
+      <PageTranslator rootId="application-root" language={language} />
     </main></LanguageContext.Provider>
   );
 }
@@ -129,7 +132,7 @@ function Overview({ onNavigate }: { onNavigate: (view: View) => void }) {
         <div>
           <p className="mb-3 inline-block rounded-full bg-soil-50 px-3 py-1 text-sm font-semibold text-soil-700">PRACTICAL HELP FOR YOUR FARM</p>
           <h1 className="max-w-2xl text-4xl font-bold tracking-tight text-leaf-900 sm:text-5xl">Know your soil. Care for your crop.</h1>
-          <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">Explore crop options using your location, area soil and weather. Check a leaf photo, or ask a farming question in English, Hindi, Tamil or Telugu.</p>
+          <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">Explore crop options using your location, area soil and weather. Check a leaf photo, or ask a farming question in your selected language.</p>
           <div className="mt-7 flex flex-wrap gap-3">
             <button className="rounded-xl bg-leaf-700 px-5 py-3 font-semibold text-white shadow-card transition hover:bg-leaf-900" onClick={() => onNavigate("soil")}>Check My Soil</button>
             <button className="rounded-xl border border-leaf-200 bg-white px-5 py-3 font-semibold text-leaf-700 transition hover:bg-leaf-50" onClick={() => onNavigate("advisor")}>Ask the advisor</button>
@@ -140,15 +143,15 @@ function Overview({ onNavigate }: { onNavigate: (view: View) => void }) {
           <dl className="mt-6 space-y-5">
             <div><dt className="text-2xl font-bold">Soil & crop planning</dt><dd className="text-sm text-leaf-100">Automatic area estimates, weather and crop comparisons</dd></div>
             <div><dt className="text-2xl font-bold">Crops</dt><dd className="text-sm text-leaf-100">Leaf checks for four supported crops</dd></div>
-            <div><dt className="text-2xl font-bold">Your language</dt><dd className="text-sm text-leaf-100">Speak, read and listen at your own pace</dd></div>
+            <div><dt className="text-2xl font-bold">Voice support</dt><dd className="text-sm text-leaf-100">Speak your question and listen to the answer in your selected language</dd></div>
           </dl>
         </aside>
       </section>
 
       <section className="grid gap-5 md:grid-cols-3">
-        <ModuleCard number="02" title="Soil & Crop Planning" detail="Choose your location to get mapped soil estimates, live weather and up to three crop options with transparent income and cost benchmarks. No soil values to type." action="Find crop options" onClick={() => onNavigate("soil")} />
+        <ModuleCard number="02" title="Soil & Crop Planning" detail="Compare the simple suitability engine with experimental Random Forest and XGBoost yield rankings, alongside mapped soil, weather and benchmark economics." action="Compare crop engines" onClick={() => onNavigate("soil")} />
         <ModuleCard number="01" title="Crop Health Intelligence" detail="The input guard rejects obvious non-leaf images before MobileNetV2 compares supported Tomato, Potato, Maize, and Grape leaf conditions. Low-confidence outputs are marked review-only, and accepted results are validated against the crop you selected." action="Open image upload" onClick={() => onNavigate("health")} />
-        <ModuleCard number="03" title="AI Agronomy Chatbot" detail="Ask about soil, crops and watering. Speak or type in your language, then listen to the answer when you choose." action="Open chatbot" onClick={() => onNavigate("advisor")} />
+        <ModuleCard number="03" title="Local Agronomy Advisor" detail="Ask about crops, soil and plant health. Search reviewed local sources with citations, speak or type, then listen to the answer." action="Open advisor" onClick={() => onNavigate("advisor")} />
       </section>
     </>
   );

@@ -60,7 +60,7 @@ export function currentLocation(): Promise<GeolocationPosition> {
   });
 }
 
-const localVoices: Record<Language, string> = { en: "en", hi: "hi", ta: "ta", te: "te" };
+const localVoices: Record<Language, string> = { en: "en", hi: "hi", ta: "ta", te: "te", bn: "bn", mr: "mr", kn: "kn" };
 
 async function speakWithLocalEngine(text: string, language: Language, done: () => void, error: (message: string) => void): Promise<PlaybackSession> {
   if (!("AudioContext" in window)) throw new Error("Local audio playback is unavailable. Please read the answer.");

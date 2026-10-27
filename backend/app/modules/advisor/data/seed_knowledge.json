@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "documents": [
+    {
+      "title": "Tomato field demonstrations and blight context",
+      "publisher": "ICAR / Krishi Vigyan Kendra Dehradun",
+      "source_url": "https://www.icar.gov.in/en/node/4685",
+      "licence": null,
+      "tags": ["tomato", "blight", "disease", "spacing", "management"],
+      "passages": [
+        {
+          "page_number": null,
+          "section": "Findings from farmer-field demonstrations, 2015–2018",
+          "text": "An ICAR-KVK Dehradun field demonstration associated closely planted tomato canopies and limited ventilation with higher humidity and more early- and late-blight problems. The demonstration reported better results when spacing and canopy management were improved. These observations are specific to that region and trial; they are not a diagnosis or a universal spray recommendation. Ask the local KVK about suitable spacing and disease management for the variety and season grown in your area."
+        }
+      ]
+    },
+    {
+      "title": "Potato late blight and its management",
+      "publisher": "ICAR",
+      "source_url": "https://www.icar.gov.in/sites/default/files/2022-06/IH-November-December-2019.pdf",
+      "licence": null,
+      "tags": ["potato", "tomato", "blight", "disease", "leaf", "spot", "symptoms"],
+      "passages": [
+        {
+          "page_number": 31,
+          "section": "Symptoms and field observation",
+          "text": "ICAR describes potato late blight as starting on leaves with pale green, water-soaked spots, often near leaf margins and tips. In moist conditions the spots may enlarge and become dark or necrotic; affected stems and tubers may also show symptoms. Similar-looking damage can have other causes, so these signs alone do not confirm late blight. Inspect plants regularly and request local plant-pathology or KVK confirmation when symptoms spread quickly."
+        }
+      ]
+    },
+    {
+      "title": "ICAR Kharif Agro-Advisories for Farmers 2025",
+      "publisher": "Indian Council of Agricultural Research (ICAR)",
+      "source_url": "https://icar.gov.in/sites/default/files/Circulars/ICAR-En-Kharif-Agro-Advisories-for-Farmers-2025.pdf",
+      "licence": null,
+      "tags": ["maize", "rust", "disease", "management", "crop sanitation"],
+      "passages": [
+        {
+          "page_number": null,
+          "section": "Maize — disease management",
+          "text": "ICAR's 2025 Kharif advisory includes maize disease-management guidance and discusses action when rust symptoms are observed. Crop-protection recommendations in an advisory depend on its region, season, product label and current local rules. Identify the crop and symptoms first, and confirm any treatment with a local KVK or agricultural officer; this local knowledge entry intentionally gives no pesticide dose or product schedule."
+        }
+      ]
+    },
+    {
+      "title": "DAESI Study Material, Volume I",
+      "publisher": "National Institute of Agricultural Extension Management (MANAGE), Government of India",
+      "source_url": "https://www.manage.gov.in/publications/eBooks/DAESI_%20Vol%20I_Study%20Material.pdf",
+      "licence": null,
+      "tags": ["grape", "black_rot", "disease", "leaf", "spot", "management"],
+      "passages": [
+        {
+          "page_number": 173,
+          "section": "Grape — black rot symptoms and sanitation",
+          "text": "MANAGE's agricultural extension study material describes grape black rot symptoms on leaves as irregular reddish-brown spots that can contain small black fruiting structures; affected berries may become dark, shrivelled and mummy-like. Remove and safely dispose of diseased plant parts and mummified berries as part of vineyard sanitation. Visual symptoms are not enough to confirm a disease, and this reference does not provide a location-specific treatment schedule."
+        }
+      ]
+    },
+    {
+      "title": "Integrated Pest Management: A Sustainable Approach to Responsible Pest Management",
+      "publisher": "ICAR Research Complex for North Eastern Hill Region",
+      "source_url": "https://www.icar.gov.in/en/integrated-pest-management-sustainable-approach-responsible-pest-management",
+      "licence": null,
+      "tags": ["ipm", "pest", "management", "monitoring", "safety"],
+      "passages": [
+        {
+          "page_number": null,
+          "section": "Prevention, monitoring and informed decisions",
+          "text": "ICAR presents integrated pest management as a combination of prevention, regular monitoring and informed decisions. It prioritizes suitable non-chemical, cultural, physical, biological and varietal measures, using pesticides only when needed and according to the product label and an appropriate local recommendation. A general chatbot result should not replace diagnosis or label directions."
+        }
+      ]
+    },
+    {
+      "title": "ICAR-CPRI Khet Bachao Abhiyaan",
+      "publisher": "ICAR — Central Potato Research Institute",
+      "source_url": "https://icar.gov.in/index.php/en/icar-cpri-shimla-concludes-month-long-khet-bachao-abhiyaan",
+      "licence": null,
+      "tags": ["soil", "fertilizer", "fertiliser", "nutrients", "management"],
+      "passages": [
+        {
+          "page_number": null,
+          "section": "Soil health and balanced nutrient management",
+          "text": "ICAR-CPRI's farmer-awareness programme highlights soil testing, balanced nutrient management, water conservation and locally suitable agricultural guidance. Fertilizer requirements vary with the crop, field, soil test, season and region. Use a current soil test and recommendations from the relevant local agricultural authority; this knowledge base does not estimate or prescribe fertilizer quantities."
+        }
+      ]
+    }
+  ]
+}

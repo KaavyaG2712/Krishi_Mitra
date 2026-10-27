@@ -4,15 +4,16 @@ import { browserSpeech, PlaybackSession, RecognitionSession, speak } from "../se
 import { recordSpeech, recordingSupported, RecordingState } from "../services/recordedSpeech";
 
 export function VoiceInput({ value, onChange, disabled }: { value: string; onChange: (v: string) => void; disabled: boolean }) {
-  const { language, t } = useLanguage();
+  const { t, language } = useLanguage();
   const [listening, setListening] = useState(false);
   const [error, setError] = useState("");
   const [provider, setProvider] = useState<"server" | "browser">(() => recordingSupported() ? "server" : "browser");
   const [phase, setPhase] = useState<RecordingState>("preparing");
   const session = useRef<RecognitionSession>();
   const previous = useRef("");
-  useEffect(() => () => session.current?.cancel(), [language]);
+  useEffect(() => () => session.current?.cancel(), []);
   useEffect(() => { if (disabled) session.current?.cancel(); }, [disabled]);
+  useEffect(() => { session.current?.cancel(); setListening(false); }, [language]);
   const start = () => {
     setError(""); previous.current = value; setListening(true);
     try {

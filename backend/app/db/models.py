@@ -4,8 +4,9 @@ from datetime import datetime
 from uuid import UUID, uuid4
 
 from pgvector.sqlalchemy import Vector
-from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, String, Text, UniqueConstraint, func
+from sqlalchemy import Boolean, Computed, DateTime, Float, ForeignKey, Integer, String, Text, UniqueConstraint, func
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base
@@ -56,9 +57,15 @@ class KnowledgeChunk(Base):
     document_id: Mapped[UUID] = mapped_column(ForeignKey("knowledge_documents.id", ondelete="CASCADE"), index=True)
     page_number: Mapped[int | None] = mapped_column(Integer, nullable=True)
     chunk_text: Mapped[str] = mapped_column(Text)
-    embedding: Mapped[list[float]] = mapped_column(Vector(768))
-    embedding_model: Mapped[str] = mapped_column(String(128))
+    # Legacy vector columns remain nullable for existing deployments; local
+    # text retrieval does not create or consume embeddings.
+    embedding: Mapped[list[float] | None] = mapped_column(Vector(768), nullable=True)
+    embedding_model: Mapped[str | None] = mapped_column(String(128), nullable=True)
     metadata_json: Mapped[dict] = mapped_column(JSONB)
+    search_vector: Mapped[str | None] = mapped_column(
+        TSVECTOR,
+        Computed("to_tsvector('simple'::regconfig, coalesce(chunk_text, ''::text))", persisted=True),
+    )
 
 
 class AdvisorConversation(Base):

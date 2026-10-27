@@ -1,12 +1,12 @@
 # KrishiMitra Final Project Report
 
-**Agricultural decision support using leaf analysis, mapped soil and weather, and a multilingual advisor**<br>
+**Agricultural decision support using leaf analysis, mapped soil and weather, and a multilingual advisor**  
 **Project I | Academic year 2026–2027 | Technical status: 8 October 2026**
 
-Institution: VIT Chennai<br>
-School: SCOPE (School of Computer Science and Engineering)<br>
-Department: Computer Science<br>
-Guide: Premalatha M<br>
+Institution: VIT Chennai  
+School: SCOPE (School of Computer Science and Engineering)  
+Department: Computer Science  
+Guide: Premalatha M  
 Students: Kaavya Gupta (23BCE1986); A Praveen (23BCE1648); Shivom Shrivastava (23BCE1983)
 
 > This is an editable technical report. Signatures, institutional certificate wording and guide approval must be completed before submission. No signature or institutional approval is asserted here.
@@ -17,8 +17,8 @@ Students: Kaavya Gupta (23BCE1986); A Praveen (23BCE1648); Shivom Shrivastava (2
 
 Draft for institutional review: the project titled **KrishiMitra: Agricultural Decision Support Using Leaf Analysis, Mapped Soil and Weather, and a Multilingual Advisor** was carried out by **Kaavya Gupta (23BCE1986), A Praveen (23BCE1648), and Shivom Shrivastava (23BCE1983)** of the Department of Computer Science, SCOPE, VIT Chennai, under the guidance of **Premalatha M** during academic year **2026–2027**. The guide and institution should verify the project title, work period and required certificate wording before signing.
 
-Guide name and signature: ______________________________<br>
-Head of department and seal, if required: ______________________________<br>
+Guide name and signature: ______________________________  
+Head of department and seal, if required: ______________________________  
 Date: ______________________________
 
 ## Student Declaration
@@ -43,31 +43,31 @@ The recorded PlantVillage experiment reports 98.63% test macro-F1 on controlled 
 
 ## Table of Contents
 
-1. Introduction ................................................................ 4<br>
-2. Literature and Patent Review ............................................. 4<br>
-3. Methodology and System Design ............................................ 5<br>
-4. Implementation and Results ............................................... 8<br>
-5. Conclusion and Future Work .............................................. 10<br>
-References ................................................................. 10<br>
+1. Introduction ................................................................ 4  
+2. Literature and Patent Review ............................................. 4  
+3. Methodology and System Design ............................................ 5  
+4. Implementation and Results ............................................... 8  
+5. Conclusion and Future Work .............................................. 10  
+References ................................................................. 10  
 Appendices ................................................................. 11
 
 ## List of Figures
 
-Figure 1. Layered runtime architecture and trust boundaries ............. 5<br>
-Figure 2. Location-to-crop planning sequence ............................ 6<br>
-Figure 3. Soil, weather and crop comparison screen ....................... 9<br>
-Figure 4. Home screen and module navigation ............................ 12<br>
-Figure 5. Crop-health upload and crop-hint screen ....................... 12<br>
-Figure 6. Location and season input screen ............................. 13<br>
-Figure 7. Optional soil-report choices ................................. 13<br>
+Figure 1. Layered runtime architecture and trust boundaries ............. 5  
+Figure 2. Location-to-crop planning sequence ............................ 6  
+Figure 3. Soil, weather and crop comparison screen ....................... 9  
+Figure 4. Home screen and module navigation ............................ 12  
+Figure 5. Crop-health upload and crop-hint screen ....................... 12  
+Figure 6. Location and season input screen ............................. 13  
+Figure 7. Optional soil-report choices ................................. 13  
 Figure 8. Advisor and server-recording screen .......................... 14
 
 ## List of Tables
 
-Table 1. Existing approaches and project gap ............................ 4<br>
-Table 2. Component responsibilities and contracts ....................... 6<br>
-Table 3. Modules and implementation status ............................. 8<br>
-Table 4. Verification evidence and interpretation ....................... 9<br>
+Table 1. Existing approaches and project gap ............................ 4  
+Table 2. Component responsibilities and contracts ....................... 6  
+Table 3. Modules and implementation status ............................. 8  
+Table 4. Verification evidence and interpretation ....................... 9  
 Table 5. Principal API routes ......................................... 11
 
 ## Abbreviations

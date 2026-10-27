@@ -1,0 +1,77 @@
+{
+  "status": "saved_metrics_only",
+  "reason": "1591 test image files are missing under C:\\Users\\Ajay\\OneDrive\\Documents\\KrishiMitra_Final\\data\\processed\\plantvillage_10class; first missing path: C:\\Users\\Ajay\\OneDrive\\Documents\\KrishiMitra_Final\\data\\processed\\plantvillage_10class\\tomato_healthy\\000544.jpg",
+  "model": "MobileNetV2",
+  "dataset": "PlantVillage 10-class test split (from existing training report)",
+  "samples": 1591,
+  "accuracy": 0.9868007542426147,
+  "macro_precision": 0.9891495929120608,
+  "macro_recall": 0.983694913296565,
+  "macro_f1": 0.986263646597288,
+  "latency_p50_ms": 40.8491031248559,
+  "latency_p95_ms": 43.51938750005502,
+  "per_class": {
+    "tomato_healthy": {
+      "precision": 0.991701244813278,
+      "recall": 1.0,
+      "f1": 0.9958333333333333,
+      "support": 239
+    },
+    "tomato_early_blight": {
+      "precision": 0.9858156028368794,
+      "recall": 0.9266666666666666,
+      "f1": 0.9553264604810997,
+      "support": 150
+    },
+    "tomato_late_blight": {
+      "precision": 0.9724137931034482,
+      "recall": 0.986013986013986,
+      "f1": 0.9791666666666666,
+      "support": 286
+    },
+    "potato_healthy": {
+      "precision": 1.0,
+      "recall": 0.9565217391304348,
+      "f1": 0.9777777777777777,
+      "support": 23
+    },
+    "potato_early_blight": {
+      "precision": 0.9803921568627451,
+      "recall": 1.0,
+      "f1": 0.9900990099009901,
+      "support": 150
+    },
+    "potato_late_blight": {
+      "precision": 0.9668874172185431,
+      "recall": 0.9733333333333334,
+      "f1": 0.9700996677740864,
+      "support": 150
+    },
+    "maize_healthy": {
+      "precision": 0.9942857142857143,
+      "recall": 1.0,
+      "f1": 0.997134670487106,
+      "support": 174
+    },
+    "maize_common_rust": {
+      "precision": 1.0,
+      "recall": 0.994413407821229,
+      "f1": 0.9971988795518207,
+      "support": 179
+    },
+    "grape_healthy": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 63
+    },
+    "grape_black_rot": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 177
+    }
+  },
+  "metrics_source": "models\\checkpoints\\mobilenetv2-10class-v1\\metrics.json",
+  "recomputed_in_this_run": false
+}

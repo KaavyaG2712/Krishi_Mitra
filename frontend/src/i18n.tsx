@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
-export type Language = "en" | "hi" | "ta" | "te";
-export const locales = { en: "en-IN", hi: "hi-IN", ta: "ta-IN", te: "te-IN" } as const;
-export const languageNames = { en: "English", hi: "हिन्दी", ta: "தமிழ்", te: "తెలుగు" };
+export type Language = "en" | "hi" | "ta" | "te" | "bn" | "mr" | "kn";
+export const locales = { en: "en-IN", hi: "hi-IN", ta: "ta-IN", te: "te-IN", bn: "bn-IN", mr: "mr-IN", kn: "kn-IN" } as const;
+export const languageNames: Record<Language, string> = { en: "English", hi: "हिन्दी", ta: "தமிழ்", te: "తెలుగు", bn: "বাংলা", mr: "मराठी", kn: "ಕನ್ನಡ" };
 const translations: Record<string, [string, string, string]> = {
   "SOIL & CROP PLANNING": ["मिट्टी और फसल योजना", "மண் மற்றும் பயிர் திட்டமிடல்", "నేల మరియు పంట ప్రణాళిక"],
   "Find crops for my area": ["मेरे क्षेत्र के लिए फसलें खोजें", "என் பகுதிக்கான பயிர்களைக் கண்டறியுங்கள்", "నా ప్రాంతానికి పంటలను కనుగొనండి"],
@@ -97,6 +97,9 @@ const translations: Record<string, [string, string, string]> = {
   "Send": ["भेजें", "அனுப்பு", "పంపండి"], "Listen": ["सुनें", "கேளுங்கள்", "వినండి"],
   "Pause": ["विराम", "இடைநிறுத்து", "పాజ్ చేయండి"], "Resume": ["जारी रखें", "தொடரவும்", "కొనసాగించండి"],
   "Retry": ["फिर कोशिश करें", "மீண்டும் முயலுங்கள்", "మళ్లీ ప్రయత్నించండి"],
+  "Sources": ["स्रोत", "ஆதாரங்கள்", "మూలాలు"],
+  "The local knowledge library currently returns English source passages.": ["स्थानीय ज्ञान संग्रह से अभी अंग्रेज़ी स्रोत सामग्री मिलती है।", "உள்ளூர் அறிவுத் தொகுப்பில் தற்போது ஆங்கில ஆதாரப் பகுதிகள் மட்டுமே உள்ளன.", "స్థానిక జ్ఞాన గ్రంథాలయం ప్రస్తుతం ఆంగ్ల మూల భాగాలను మాత్రమే అందిస్తోంది."],
+  "Search uses local rules and cited passages. Current answers are in English.": ["खोज स्थानीय नियमों और स्रोत-सहित अंशों का उपयोग करती है। अभी उत्तर अंग्रेज़ी में हैं।", "தேடல் உள்ளூர் விதிகளையும் மேற்கோள் கொண்ட பகுதிகளையும் பயன்படுத்துகிறது. தற்போதைய பதில்கள் ஆங்கிலத்தில் உள்ளன.", "శోధన స్థానిక నియమాలు, మూల సూచనలున్న భాగాలను ఉపయోగిస్తుంది. ప్రస్తుతం సమాధానాలు ఆంగ్లంలో ఉన్నాయి."],
   "Your question or corrected transcript": ["आपका प्रश्न या सुधारा हुआ पाठ", "உங்கள் கேள்வி அல்லது திருத்திய உரை", "మీ ప్రశ్న లేదా సవరించిన వచనం"],
   "Sample date (optional)": ["नमूने की तारीख (वैकल्पिक)", "மாதிரி தேதி (விருப்பம்)", "నమూనా తేదీ (ఐచ్ఛికం)"],
   "Clear saved draft": ["सहेजा मसौदा हटाएँ", "சேமித்த வரைவை நீக்கு", "సేవ్ చేసిన ముసాయిదాను తొలగించండి"],
@@ -106,5 +109,6 @@ const translations: Record<string, [string, string, string]> = {
 export const LanguageContext = createContext<Language>("en");
 export function useLanguage() {
   const language = useContext(LanguageContext);
-  return { language, t: (text: string) => language === "en" ? text : translations[text]?.[{hi: 0, ta: 1, te: 2}[language]] ?? text };
+  const translationIndex: Partial<Record<Language, number>> = { hi: 0, ta: 1, te: 2 };
+  return { language, t: (text: string) => language === "en" ? text : translations[text]?.[translationIndex[language] ?? -1] ?? text };
 }

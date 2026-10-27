@@ -1,0 +1,2 @@
+﻿status,model,dataset,samples,accuracy,macro_precision,macro_recall,macro_f1,latency_p50_ms,latency_p95_ms,recomputed_in_this_run
+saved_metrics_only,MobileNetV2,PlantVillage 10-class test split (from existing training report),1591,0.9868007542426147,0.9891495929120608,0.983694913296565,0.986263646597288,40.8491031248559,43.51938750005502,False
