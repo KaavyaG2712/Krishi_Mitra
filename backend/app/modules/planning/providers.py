@@ -15,6 +15,7 @@ from threading import RLock
 from time import monotonic, sleep
 from urllib.parse import urlsplit
 
+import certifi
 import httpx
 from app.core.config import get_settings
 from app.modules.planning.dates import today_in_india
@@ -191,6 +192,7 @@ class PlanningData:
             url = SOIL_URL + f"{layer}_m_250m_b10cm_19500101_20171231_go_epsg.4326_v0.2.tif"
             try:
                 with rasterio.Env(GDAL_DISABLE_READDIR_ON_OPEN="EMPTY_DIR", CPL_VSIL_CURL_ALLOWED_EXTENSIONS=".tif",
+                                  CURL_CA_BUNDLE=certifi.where(), SSL_CERT_FILE=certifi.where(),
                                   GDAL_HTTP_CONNECTTIMEOUT="8", GDAL_HTTP_TIMEOUT="30", GDAL_HTTP_MAX_RETRY="3",
                                   GDAL_HTTP_RETRY_DELAY="1",
                                   VSI_CACHE=True, VSI_CACHE_SIZE=5_000_000):

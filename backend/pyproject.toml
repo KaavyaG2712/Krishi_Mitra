@@ -9,6 +9,7 @@ description = "Local API for KrishiMitra Review 3"
 requires-python = ">=3.12,<3.13"
 dependencies = [
   "alembic>=1.14,<2",
+  "certifi>=2024.7",
   "fastapi>=0.121,<1",
   "google-genai>=1.0,<2",
   "httpx>=0.28,<1",
