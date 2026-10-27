@@ -16,6 +16,7 @@ from time import monotonic, sleep
 from urllib.parse import urlsplit
 
 import httpx
+from app.core.config import get_settings
 from app.modules.planning.dates import today_in_india
 
 DATA = Path(__file__).parent / "data"
@@ -222,10 +223,10 @@ class PlanningData:
 
     def forecast(self, lat, lon):
         def fetch():
-            p = self.json("https://api.open-meteo.com/v1/forecast", {
-                "latitude": lat, "longitude": lon, "timezone": "Asia/Kolkata", "forecast_days": 7,
-                "current": "temperature_2m,relative_humidity_2m", "daily": "temperature_2m_max,temperature_2m_min,precipitation_sum"})
             try:
+                p = self.json("https://api.open-meteo.com/v1/forecast", {
+                    "latitude": lat, "longitude": lon, "timezone": "Asia/Kolkata", "forecast_days": 7,
+                    "current": "temperature_2m,relative_humidity_2m", "daily": "temperature_2m_max,temperature_2m_min,precipitation_sum"})
                 daily, units, current = p["daily"], p["daily_units"], p["current"]
                 if units["precipitation_sum"] != "mm" or units["temperature_2m_max"] != "°C" or units["temperature_2m_min"] != "°C" or p["current_units"]["temperature_2m"] != "°C":
                     raise ValueError()
@@ -245,8 +246,30 @@ class PlanningData:
                         "observed_at": current["time"], "days": days,
                         "source": "Open-Meteo model weather", "source_url": "https://open-meteo.com/",
                         "retrieved_at": datetime.now(timezone.utc).isoformat()}
-            except (KeyError, TypeError, ValueError, IndexError):
-                raise DataUnavailable("Weather returned incomplete dates, units or values.") from None
+            except (DataUnavailable, KeyError, TypeError, ValueError, IndexError):
+                key = get_settings().weatherapi_key
+                if not key:
+                    raise DataUnavailable("Live weather is unavailable from the primary provider. Add WEATHERAPI_KEY to the backend environment to enable the backup forecast.") from None
+                try:
+                    p = self.json("https://api.weatherapi.com/v1/forecast.json", {
+                        "key": key, "q": f"{lat},{lon}", "days": 3, "aqi": "no", "alerts": "no"})
+                    current = p["current"]
+                    rows = p["forecast"]["forecastday"]
+                    today = today_in_india()
+                    expected_dates = [(today + timedelta(days=i)).isoformat() for i in range(3)]
+                    if [row["date"] for row in rows] != expected_dates:
+                        raise ValueError()
+                    days = [{"date": row["date"], "high_c": number(row["day"]["maxtemp_c"], -90, 65),
+                             "low_c": number(row["day"]["mintemp_c"], -90, 65),
+                             "rain_mm": number(row["day"]["totalprecip_mm"], 0, 1500)} for row in rows]
+                    if any(day["low_c"] > day["high_c"] for day in days):
+                        raise ValueError()
+                    return {"status": "available", "temperature_c": number(current["temp_c"], -90, 65),
+                            "observed_at": current["last_updated"], "days": days,
+                            "source": "WeatherAPI.com live weather", "source_url": "https://www.weatherapi.com/",
+                            "retrieved_at": datetime.now(timezone.utc).isoformat()}
+                except (DataUnavailable, KeyError, TypeError, ValueError, IndexError):
+                    raise DataUnavailable("Live weather providers are unavailable or returned incomplete data. Please retry later.") from None
         return self.cache.get(("forecast", round(lat, 2), round(lon, 2), today_in_india().isoformat()), 1800, fetch)
 
     def climate(self, lat, lon):

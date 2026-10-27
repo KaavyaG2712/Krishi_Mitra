@@ -13,7 +13,7 @@ type Plan = {
   request: Place & { location_name: string; sowing_date: string; irrigation: string; area_ha: number };
   soil: { status: string; message?: string; source?: string; source_url?: string; note?: string; reference_period?: string;
     retrieved_at?: string; measurements?: Record<string, { value: number; unit: string; source_url: string }> };
-  forecast: { status: string; message?: string; temperature_c?: number; observed_at?: string; source_url?: string;
+  forecast: { status: string; message?: string; temperature_c?: number; observed_at?: string; source?: string; source_url?: string;
     days?: { date: string; high_c: number; low_c: number; rain_mm: number }[] };
   climate: { status: string; message?: string; period?: string; annual_rain_mm?: number; source_url?: string };
   top_crops: Candidate[]; excluded: { crop: string; reasons: string[] }[]; warnings: string[];
@@ -151,7 +151,7 @@ export default function CropPlanner() {
           {plan.soil.measurements ? <><dl className="soil-snapshot">{Object.entries(plan.soil.measurements).map(([key, m]) => <div key={key}><dt>{{ ph: "pH", organic_carbon: "Organic carbon", sand: "Sand content" }[key] || key}</dt><dd>{m.value} {m.unit}</dd></div>)}</dl><p className="help">250 m map · 10 cm depth · {plan.soil.reference_period}</p><p className="help">{plan.soil.note}</p><a className="text-link" href={plan.soil.source_url} target="_blank" rel="noreferrer">{plan.soil.source} ↗</a></> : <p className="notice">{plan.soil.message}</p>}
         </article>
         <article className="panel"><span className="source-badge">{t("Weather & climate")}</span><h3 className="text-lg font-bold mt-3">{plan.forecast.temperature_c !== undefined ? `${plan.forecast.temperature_c} °C now` : "Live weather unavailable"}</h3>
-          {plan.forecast.days ? <><p className="help">Model weather time: {plan.forecast.observed_at} IST</p><div className="weather-days">{plan.forecast.days.map(d => <div key={d.date}><strong>{new Date(`${d.date}T12:00:00`).toLocaleDateString("en-IN", { weekday: "short" })}</strong><span>{d.high_c}° / {d.low_c}°</span><small>{d.rain_mm} mm</small></div>)}</div><a className="text-link" href={plan.forecast.source_url} target="_blank" rel="noreferrer">Open-Meteo forecast ↗</a></> : <p className="notice">{plan.forecast.message}</p>}
+          {plan.forecast.days ? <><p className="help">Model weather time: {plan.forecast.observed_at} IST</p><div className="weather-days">{plan.forecast.days.map(d => <div key={d.date}><strong>{new Date(`${d.date}T12:00:00`).toLocaleDateString("en-IN", { weekday: "short" })}</strong><span>{d.high_c}° / {d.low_c}°</span><small>{d.rain_mm} mm</small></div>)}</div><a className="text-link" href={plan.forecast.source_url} target="_blank" rel="noreferrer">{plan.forecast.source || "Weather forecast"} ↗</a></> : <p className="notice">{plan.forecast.message}</p>}
           {plan.climate.status === "available" ? <p className="help mt-3">Annual rainfall baseline: {plan.climate.annual_rain_mm} mm ({plan.climate.period}). <a className="text-link" href={plan.climate.source_url} target="_blank" rel="noreferrer">Historical climate ↗</a></p> : <p className="notice">{plan.climate.message}</p>}
         </article>
       </div>

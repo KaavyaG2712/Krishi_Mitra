@@ -133,7 +133,7 @@ def plan(request: PlanRequest, provider: PlanningData, candidate_limit=3):
     if forecast["status"] == "unavailable":
         warnings.insert(0, "Live weather is unavailable. The shortlist uses historical climate only; retry before deciding when to sow.")
     if (request.sowing_date - today_in_india()).days > 6:
-        warnings.insert(0, "The seven-day forecast is shown for context; it does not forecast the selected future sowing date.")
+        warnings.insert(0, "The available live forecast covers only the near term; it does not forecast the selected future sowing date.")
     return {"status": status, "request": request.model_dump(mode="json"), "generated_at": datetime.now(timezone.utc).isoformat(),
             "soil": soil, "forecast": forecast, "climate": climate, "top_crops": top, "excluded": excluded,
             "warnings": warnings, "catalog_version": catalog()["version"], "yield_source": catalog()["yield_source"],

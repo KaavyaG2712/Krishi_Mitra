@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     gemini_api_key: str | None = None
     gemini_generation_model: str = "gemini-3.1-flash-lite"
     gemini_speech_model: str | None = None
+    weatherapi_key: str | None = None
     model_artifact_dir: Path = Path(__file__).resolve().parents[3] / "models" / "checkpoints" / "mobilenetv2-10class-v1"
     # Below this threshold, return the closest supported label as uncertain.
     # Non-leaf rejection is handled separately before model inference.
