@@ -1,5 +1,0 @@
-﻿module,engine,status,samples,dataset_or_split,accuracy,macro_precision,macro_recall,macro_f1,mae_kg_ha,rmse_kg_ha,r2,fit_seconds,predict_seconds,hit_at_1,hit_at_3,mrr,latency_p95_ms,mean_query_latency_ms
-Crop yield benchmark (Module 2 experiment),mean_baseline,evaluated,10011,"2013, 2014, 2015, 2016, 2017",,,,,770.3075354167336,1252.2561421650146,-0.2074912111657694,0.13,0.01,,,,,
-Crop yield benchmark (Module 2 experiment),random_forest,evaluated,10011,"2013, 2014, 2015, 2016, 2017",,,,,676.8885663299214,1071.5026804072659,0.11593507402018077,35.037,0.061,,,,,
-Crop yield benchmark (Module 2 experiment),xgboost,evaluated,10011,"2013, 2014, 2015, 2016, 2017",,,,,683.0988884141507,1080.9659943340644,0.1002503195606761,0.404,0.02,,,,,
-Local agronomy advisor (Module 3),PostgreSQL full-text retrieval,database_unavailable,,Local seeded knowledge passages,,,,,,,,,,,,,,

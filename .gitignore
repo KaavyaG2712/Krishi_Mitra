@@ -6,7 +6,7 @@
 **/.env.*
 !**/.env.example
 
-# Python environments, caches, and build output
+# Local Python environments, caches, and build output
 .venv/
 venv/
 __pycache__/
@@ -20,13 +20,13 @@ htmlcov/
 build/
 dist/
 
-# JavaScript dependencies and generated frontend output
+# Frontend dependencies and generated files
 node_modules/
 frontend/dist/
 frontend/.vite/
 frontend/public/ocr/
 
-# Local datasets and generated training manifests (regenerate with data scripts)
+# Local data; keep only the dataset required by the runtime crop-yield comparison
 /data/raw/*
 !/data/raw/crop-yield-benchmark/
 /data/raw/crop-yield-benchmark/*
@@ -34,11 +34,10 @@ frontend/public/ocr/
 !/data/raw/crop-yield-benchmark/source_metadata.json
 /data/processed/
 /data/external_test/
-/experiments/crop-yield-benchmark/results/
 /data/splits/*.csv
 /data/splits/*.summary.json
 
-# Model training outputs; keep only the released Module 1 inference artifact
+# Keep only the released crop-health inference artifact
 /models/checkpoints/*
 !/models/checkpoints/mobilenetv2-10class-v1/
 /models/checkpoints/mobilenetv2-10class-v1/*
@@ -51,8 +50,7 @@ frontend/public/ocr/
 postgres_data/
 *.log
 *.tmp
-/tmp/
-/imagessssss/
+tmp/
 .codex-finalizer/
 .codex-doc-build/
 .codex-ppt-build/
@@ -60,13 +58,3 @@ postgres_data/
 .idea/
 .DS_Store
 Thumbs.db
-
-# Drafts, duplicated handoffs, and conversation exports are not project sources
-/capstone -idea1-agr.docx
-/KrishiMitra_capstone_conversation.md
-/edited_IMPLEMENTATION_HANDOFF.md
-/IMPLEMENTATION_HANDOFF.md
-
-# Keep only the final walkthrough deck
-/presentations/*
-!/presentations/KrishiMitra_Technical_Walkthrough_v2.pptx
