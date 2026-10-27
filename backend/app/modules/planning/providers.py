@@ -208,7 +208,8 @@ class PlanningData:
             except (rasterio.errors.RasterioError, DataUnavailable, ValueError, OSError) as error:
                 _LOGGER.warning(
                     "planning_soil_layer_failed",
-                    extra={"source": "s3.openlandmap.org", "layer": key, "error_type": type(error).__name__},
+                    extra={"source": "s3.openlandmap.org", "layer": key, "error_type": type(error).__name__,
+                           "error_message": " ".join(str(error).split())[:350]},
                 )
                 return key, None
         with ThreadPoolExecutor(max_workers=3) as pool:
