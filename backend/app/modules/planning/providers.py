@@ -5,6 +5,7 @@ Read COG windows via HTTP Range; never download a global raster per request.
 """
 import copy
 import json
+import logging
 import math
 from collections import OrderedDict
 from concurrent.futures import Future, ThreadPoolExecutor
@@ -12,6 +13,7 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from threading import RLock
 from time import monotonic, sleep
+from urllib.parse import urlsplit
 
 import httpx
 from app.modules.planning.dates import today_in_india
@@ -25,6 +27,7 @@ SOIL_LAYERS = {
 }
 _NOMINATIM_LOCK = RLock()
 _NOMINATIM_LAST_REQUEST = 0.0
+_LOGGER = logging.getLogger("app")
 
 
 class DataUnavailable(Exception):
@@ -83,13 +86,26 @@ class PlanningData:
             try:
                 return self._json(url, params)
             except httpx.HTTPError as error:
+                status_code = error.response.status_code if isinstance(error, httpx.HTTPStatusError) else None
                 transient = isinstance(error, httpx.RequestError) or (
-                    isinstance(error, httpx.HTTPStatusError) and error.response.status_code in {500, 502, 503, 504})
+                    isinstance(error, httpx.HTTPStatusError) and status_code in {408, 429, 500, 502, 503, 504})
+                _LOGGER.warning(
+                    "planning_data_source_failed",
+                    extra={"source": urlsplit(url).hostname or "unknown", "error_type": type(error).__name__,
+                           "status_code": status_code, "attempt": attempt + 1},
+                )
                 if transient and attempt + 1 < max_attempts:
                     # Short backoff lets a transient upstream restart or network
                     # blip recover without holding the recommendation request
                     # for the much longer SDK default retry intervals.
-                    sleep(0.35 * (attempt + 1))
+                    retry_after = None
+                    if isinstance(error, httpx.HTTPStatusError):
+                        retry_after = error.response.headers.get("Retry-After")
+                    try:
+                        delay = min(float(retry_after), 2.0) if retry_after is not None else 0.5 * (attempt + 1)
+                    except ValueError:
+                        delay = 0.5 * (attempt + 1)
+                    sleep(delay)
                     continue
                 raise DataUnavailable("The data service could not be reached. Please retry.") from None
 
@@ -174,7 +190,7 @@ class PlanningData:
             url = SOIL_URL + f"{layer}_m_250m_b10cm_19500101_20171231_go_epsg.4326_v0.2.tif"
             try:
                 with rasterio.Env(GDAL_DISABLE_READDIR_ON_OPEN="EMPTY_DIR", CPL_VSIL_CURL_ALLOWED_EXTENSIONS=".tif",
-                                  GDAL_HTTP_CONNECTTIMEOUT="5", GDAL_HTTP_TIMEOUT="20", GDAL_HTTP_MAX_RETRY="1",
+                                  GDAL_HTTP_CONNECTTIMEOUT="8", GDAL_HTTP_TIMEOUT="30", GDAL_HTTP_MAX_RETRY="3",
                                   GDAL_HTTP_RETRY_DELAY="1",
                                   VSI_CACHE=True, VSI_CACHE_SIZE=5_000_000):
                     with rasterio.open(url) as src:
@@ -188,7 +204,11 @@ class PlanningData:
                             return key, None
                         value = number(float(pixel[0, 0]) * scale, 0, upper)
                         return key, {"value": round(value, 2), "unit": unit, "source_url": url}
-            except (rasterio.errors.RasterioError, DataUnavailable, ValueError, OSError):
+            except (rasterio.errors.RasterioError, DataUnavailable, ValueError, OSError) as error:
+                _LOGGER.warning(
+                    "planning_soil_layer_failed",
+                    extra={"source": "s3.openlandmap.org", "layer": key, "error_type": type(error).__name__},
+                )
                 return key, None
         with ThreadPoolExecutor(max_workers=3) as pool:
             measurements = {k: v for k, v in pool.map(sample, SOIL_LAYERS.items()) if v is not None}

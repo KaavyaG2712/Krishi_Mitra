@@ -49,7 +49,8 @@ class EventFormatter(logging.Formatter):
     def format(self, record):
         # Fixed event names only. Never serialize exception bodies/requests.
         event = {"level": record.levelname, "event": record.getMessage()}
-        for key in ("error_code", "duration_ms", "source_language", "target_language"):
+        for key in ("error_code", "duration_ms", "source_language", "target_language",
+                    "source", "error_type", "status_code", "attempt", "layer"):
             if hasattr(record, key):
                 event[key] = getattr(record, key)
         return json.dumps(event)
